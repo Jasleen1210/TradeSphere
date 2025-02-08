@@ -17,9 +17,11 @@ app.secret_key = "your_secret_key"
 mongo_uri = os.getenv("MONGO_URI")
 data = pd.read_csv("energy_data.csv")
 client = MongoClient(mongo_uri)
-db = client["tradesphere"]  
-users = db["users"]  
-trades = db["trades"] 
+db = client["db"]  
+users = db["user"]  
+trades = db["trade"] 
+print("✅ Connected to database:", db.name)
+print("📂 Collections available:", db.list_collection_names())
 def get_top_sellers_and_buyers(resource):
     supply_col = f"{resource}_supply (kWh)"
     demand_col = f"{resource}_demand (kWh)"
@@ -84,19 +86,24 @@ def register():
         email = request.form['email']
         password = request.form['password']
 
-        # Check if the email already exists in the database
-        existing_user = users.find_one({"email": email})
-        if existing_user:
-            return render_template('register.html', error="Email already registered. Try another email.")
-        hashed_password = generate_password_hash(password)
-        # Insert user into MongoDB
-        users.insert_one({
-            "name": name,
-            "email": email,
-            "password": hashed_password # Store hashed password in production
-        })
+       
+        existing_user = users.find_one({"email": email})  # Check if user exists
+        print("🔍 Checking if email exists in DB:", existing_user)  # Debugging
 
-        return redirect(url_for('login', email=email))  # Redirect to profile page
+        if existing_user:
+            print("❌ User already exists! Redirecting back to register.")
+            return render_template('register.html', error="Email already registered. Try another email.")
+
+        hashed_password = generate_password_hash(password)
+        users.insert_one({"name": name, "email": email, "password": hashed_password})
+
+        print("✅ User registered successfully!")
+        return redirect(url_for('login', email=email))  # Redirect to login
+
+       #if existing_user:
+            #return render_template('register.html', error="Email already registered. Try another email.")
+            #hashed_password = generate_password_hash(password)
+        # Insert user into MongoDB
 
     return render_template('register.html')
 
