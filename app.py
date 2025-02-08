@@ -16,7 +16,7 @@ app.secret_key = "your_secret_key"
 mongo_uri = os.getenv("")
 data = pd.read_csv("energy_data.csv")
 client = MongoClient(mongo_uri)
-db = client["Tradesphere"]  
+db = client["tradesphere"]  
 users = db["users"]  
 trades = db["trades"] 
 def get_top_sellers_and_buyers(resource):
