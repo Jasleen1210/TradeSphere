@@ -1,4 +1,4 @@
-wind_supply (kWh),wind_demand (kWh),wind_price (INR),solar_supply (kWh),solar_demand (kWh),solar_price (INR),biogas_supply (kWh),biogas_demand (kWh),biogas_price (INR)
+wind_supply (MWh),wind_demand (MWh),wind_price (INR),solar_supply (MWh),solar_demand (MWh),solar_price (INR),biogas_supply (MWh),biogas_demand (MWh),biogas_price (INR)
 71,68,5.193401446700802,38,66,3.1154329282271425,52,50,4.771259391800207
 34,83,3.8161226005832987,90,73,4.201600241909642,57,61,5.800020503869296
 91,41,3.5432835892164714,91,81,2.957321010166865,78,9,5.697150967756718
