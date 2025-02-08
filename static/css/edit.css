@@ -1,0 +1,122 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #89a289; /* Light greenish-white background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Centered container */
+.container {
+    background-color: white;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Heading */
+h2 {
+    color: #2d6a4f;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    
+}
+
+label {
+    font-weight: bold;
+    color: #2d6a4f;
+    text-align: left;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d4e4d4;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: 0.3s ease-in-out;
+}
+
+/* Input focus effect */
+input:focus, textarea:focus {
+    border-color: #40916c;
+    outline: none;
+    box-shadow: 0 0 5px rgba(64, 145, 108, 0.5);
+}
+
+/* Button Container to make buttons same width */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* Submit & Cancel Buttons */
+button, .btn {
+    flex: 1;  /* Ensures both buttons take equal width */
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    font-weight: bold;
+    box-sizing: border-box;  /* Ensures consistent width */
+}
+
+/* Green submit button */
+button {
+    background-color: #40916c;
+    color: white;
+    transition: background 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #2d6a4f;
+}
+
+/* White cancel button */
+.btn {
+    background-color: white;
+    color: #40916c;
+    border: 2px solid #40916c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn:hover {
+    background-color: #2d6a4f;
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    input, textarea {
+        font-size: 14px;
+    }
+
+    button, .btn {
+        font-size: 14px;
+    }
+}

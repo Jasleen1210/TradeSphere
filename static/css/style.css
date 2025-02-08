@@ -1,0 +1,336 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    color: #333;
+    background-color: #f4f4f4; /* Use this as a fallback */
+    height: 100%;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+.about {
+    background-image: url('/static/images/home1.jpg'); 
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+/* About Us Section Styling */
+.about-us {
+    padding: 50px 10%;
+    background-color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+    margin-bottom: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.about-us h2 {
+    font-size: 2rem;
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+.about-us p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Team Section Styling */
+.team {
+    padding: 50px 10%;
+    text-align: center;
+}
+
+.team h2 {
+    font-size: 2rem;
+    color: #b9e8c4;
+    margin-bottom: 30px;
+}
+
+.team-members {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.team-member {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+}
+
+.team-member h3 {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-top: 15px;
+}
+
+.team-member p {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.4;
+}
+.team-member a {
+    color:#1354cb;
+}
+.photo-placeholder {
+    width: 150px;
+    height: 150px;
+    background-color: #f4f4f4;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 15px;
+}
+
+.photo-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hero {
+    color: white;
+    /* height: 60vh; */
+    text-align: center;
+    padding-top: 120px;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.hero .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    background-color: #28a745;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.hero .btn:hover {
+    background-color: #218838;
+}
+
+.features {
+    position: relative;
+    width: 100%;
+    height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+}
+
+.bg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(231, 221, 221, 0.215);
+    z-index: -1;
+    transition: background-color 0.5s ease;
+    background-size: cover;
+    background-position: center;
+}
+
+.feature-cards {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;  
+    overflow: hidden;
+    z-index: 2;
+}
+
+.feature-card {
+    display: flex;
+    align-items: center;
+    width: 32%;
+    overflow-x: hidden;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    justify-content: center;
+    font-size: 18px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+
+    background: rgba(99, 81, 81, 0.402);
+    border: 1px solid #211f1f;
+    padding: 10px;
+    text-align: left;
+    transition: transform 0.3s ease;
+    flex-direction: column;
+}
+
+.feature-card .link a{
+    color: rgb(231, 228, 228);
+    text-decoration: none;
+}
+
+.feature-card:hover {
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+}
+
+.feature-cards:has(#card1:hover) {
+    background-image: url('/static/images/card3.png');
+}
+
+.feature-cards:has(#card2:hover) {
+    background-image: url('/static/images/card.jpg');
+  }
+
+.feature-cards:has(#card3:hover) {
+    background-image: url('/static/images/bg.jpg');
+}
+
+
+.features h3{
+    margin-top: 0px;
+    font-size: 1.6rem;
+    color: rgb(30, 0, 0);
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.extra-content {
+    display: none;
+    margin-top: 10px;
+    font-size: 16px;
+    text-align: center;
+  }
+  
+.feature-card:hover .extra-content {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.extra-content {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.main-page{
+    background: #b8dfc1; /*for home page only*/
+    color: #211f1f !important;/*sorry*/
+}
+
+/* Slideshow */
+.landing{
+    overflow: hidden; /*hiding the zoom pic ka outer border*/
+}
+.slideshow {
+    position: relative;
+    height: 100vh;
+    /* width: 100%; */
+    overflow: hidden;
+}
+
+.slides {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    animation: fadeZoom 15s infinite;
+}
+
+.slide:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.slide:nth-child(2) {
+    animation-delay: 5s;
+}
+
+.slide:nth-child(3) {
+    animation-delay: 10s;
+}
+
+/* Zoom and fade animation */
+@keyframes fadeZoom {
+    0% {
+        opacity: 0;
+        transform: scale(1);
+    }
+    10% {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+    33.33% {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+    43.33% {
+        opacity: 0;
+        transform: scale(1.3);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.3);
+    }
+}
+
+/* Content Overlay */
+.overlays {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+/* Map section */
+.map-container{
+    background: #b8dfc1;/*temp color pls change later- also change footer colour while changing this line 243*/
+    text-align: center;
+    padding: 7vh 0vh;
+}
+.map iframe{
+    outline: none; 
+    border: none;  
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+.map h1{
+    font-size: 2rem;
+}
