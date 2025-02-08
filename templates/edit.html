@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile</title>
+    <title>Edit Profile - TradeSphere</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/edit.css') }}">
 </head>
 <body>
@@ -17,62 +17,61 @@
             <input type="text" id="username" required>
 
             <label for="bio">Bio:</label>
-            <textarea id="bio" rows="3" ></textarea>
+            <textarea id="bio" rows="3"></textarea>
 
             <label for="location">Location:</label>
             <input type="text" id="location" required>
+
             <div class="button-container">
                 <button type="submit">Save Changes</button>
                 <a href="{{ url_for('profile') }}" class="btn">Cancel</a>
             </div>
         </form>
     </div>
-
     <script>
-        // Load existing profile data from localStorage
-        document.getElementById('name').value = localStorage.getItem('profileName') || '';
-        document.getElementById('username').value = localStorage.getItem('userName') || '';
-        document.getElementById('bio').value = localStorage.getItem('profileBio') || '';
-        document.getElementById('location').value = localStorage.getItem('profileLocation') || '';
-
-        // Save updated profile details
-        document.getElementById('editProfileForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            localStorage.setItem('profileName', document.getElementById('name').value);
-            localStorage.setItem('userName', document.getElementById('username').value);
-            localStorage.setItem('profileBio', document.getElementById('bio').value);
-            localStorage.setItem('profileLocation', document.getElementById('location').value);
-
-            // Redirect to profile page
-            window.location.href = "{{ url_for('profile') }}";
-        });
-        (function(){
-            if(!window.chatbase || window.chatbase("getState") !== "initialized"){
-                window.chatbase = (...arguments) => {
-                    if(!window.chatbase.q) { window.chatbase.q = []; }
-                    window.chatbase.q.push(arguments);
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get profile details from the frontend (profile.html)
+            document.getElementById('name').value = document.getElementById('profileName').textContent.trim();
+            document.getElementById('username').value = document.getElementById('userName').textContent.trim();
+            document.getElementById('bio').value = document.getElementById('profileBio').textContent.trim();
+            document.getElementById('location').value = document.getElementById('profileLocation').textContent.trim();
+    
+            // Submit form and send data to MongoDB
+            document.getElementById("editProfileForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+    
+                const updatedData = {
+                    name: document.getElementById('name').value,
+                    username: document.getElementById('username').value,
+                    bio: document.getElementById('bio').value,
+                    location: document.getElementById('location').value
                 };
-                window.chatbase = new Proxy(window.chatbase, {
-                    get(target, prop) {
-                        if (prop === "q") { return target.q; }
-                        return (...args) => target(prop, ...args);
+    
+                fetch("/update_profile", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updatedData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Profile updated successfully!");
+                        // Update profile details on frontend dynamically
+                        document.getElementById('profileName').textContent = updatedData.name;
+                        document.getElementById('userName').textContent = updatedData.username;
+                        document.getElementById('profileBio').textContent = updatedData.bio;
+                        document.getElementById('profileLocation').textContent = updatedData.location;
+    
+                        window.location.href = "/profile";  // Redirect back to profile page
+                    } else {
+                        alert("Error updating profile: " + data.error);
                     }
-                });
-            }
-            const onLoad = function() {
-                const script = document.createElement("script");
-                script.src = "https://www.chatbase.co/embed.min.js";
-                script.id = "qjVoHtpT94gDHkc3Ioe3L";
-                script.domain = "www.chatbase.co";
-                document.body.appendChild(script);
-            };
-            if (document.readyState === "complete") {
-                onLoad();
-            } else {
-                window.addEventListener("load", onLoad);
-            }
-        })();
+                })
+                .catch(error => console.error("Error updating profile:", error));
+            });
+        });
     </script>
+    
 </body>
 </html>
+

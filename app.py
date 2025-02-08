@@ -109,7 +109,56 @@ def footprint():
 @app.route('/edit')
 def edit():
     return render_template('edit.html')
+@app.route("/get_profile", methods=["GET"])
+def get_profile():
+    if "user_email" not in session:
+        return jsonify({"error": "User not logged in"}), 401
 
+    user_email = session["user_email"]
+    user = db["user"].find_one({"email": user_email})
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    profile_data = {
+        "profileName": user.get("name", ""),
+        "userName": user.get("username", ""),
+        "profileBio": user.get("bio", ""),
+        "profileLocation": user.get("location", "")
+    }
+
+    return jsonify(profile_data)
+
+
+@app.route("/update_profile", methods=["POST"])
+def update_profile():
+    if "user_email" not in session:
+        return jsonify({"success": False, "error": "User not logged in"}), 401
+
+    user_email = session["user_email"]
+    data = request.get_json()
+
+    # Debug: Print received data
+    print("🔍 Received profile update request:", data)
+
+    if not data:
+        return jsonify({"success": False, "error": "No data received"}), 400
+
+    update_data = {
+        "name": data.get("name", ""),
+        "username": data.get("username", ""),
+        "bio": data.get("bio", ""),
+        "location": data.get("location", "")
+    }
+
+    result = db["user"].update_one({"email": user_email}, {"$set": update_data})
+
+    if result.modified_count > 0:
+        print("✅ Profile updated successfully in MongoDB!")
+        return jsonify({"success": True})
+    else:
+        print("⚠ No changes were made to the profile.")
+        return jsonify({"success": False, "error": "No changes made"}), 400
 
 
 @app.route('/register', methods=['GET', 'POST'])
