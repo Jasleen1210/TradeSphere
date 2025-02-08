@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import pandas as pd
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
+from bson.objectid import ObjectId
 from dotenv import load_dotenv
 import os
 
@@ -13,7 +14,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
 
-mongo_uri = os.getenv("")
+mongo_uri = os.getenv("MONGO_URI")
 data = pd.read_csv("energy_data.csv")
 client = MongoClient(mongo_uri)
 db = client["tradesphere"]  
@@ -58,15 +59,10 @@ def biogas():
 @app.route('/profile')
 def profile():
     return render_template('profile.html')  # Serve profile.html at /profile
-@app.route('/community')
-def community():
-    return render_template('community.html')
 @app.route('/payment')
 def payment():
     return render_template('payment.html')
-@app.route('/buy')
-def buy():
-    return render_template('buy.html')
+
 @app.route('/about')
 def about():
     return render_template('about.html')
@@ -156,6 +152,64 @@ def submit_trade():
         "price": price
     })
 
-    return jsonify({"success": True, "message": "Trade submitted successfully!"})
+
+@app.route("/buy")
+def buy():
+    if "user_email" not in session:
+        return redirect(url_for("login_page"))  # Redirect if not logged in
+    return render_template("buy.html")
+
+@app.route("/get_trades")
+def get_trades():
+    try:
+        trades = db["trades"].find()
+        trade_list = []
+        for trade in trades:
+            trade_list.append({
+                "_id": str(trade["_id"]),
+                "email": trade["email"],
+                "energyType": trade["energyType"],
+                "quantity": trade["quantity"],
+                "price": trade["price"]
+            })
+        
+        # Debugging output
+        print("Fetched trades:", trade_list)  
+
+        return jsonify(trade_list)
+
+    except Exception as e:
+        print(f"❌ Error fetching trades: {e}")
+        return jsonify({"error": "Failed to fetch trades"}), 500
+
+@app.route("/buy_rec", methods=["POST"])
+def buy_rec():
+    if "user_email" not in session:
+        return jsonify({"error": "User not logged in"}), 401
+
+    data = request.get_json()
+    trade_id = data.get("tradeId")
+    buyer_email = session["user_email"]  # Logged-in buyer
+    quantity = data.get("quantity")
+    price = data.get("price")
+
+    trade = db["trades"].find_one({"_id": ObjectId(trade_id)})
+    if not trade:
+        return jsonify({"error": "Trade not found"}), 404
+
+    # Record purchase in MongoDB
+    purchases_collection = db["purchases"]
+    purchases_collection.insert_one({
+        "buyer_email": buyer_email,
+        "seller_email": trade["email"],
+        "energyType": trade["energyType"],
+        "quantity": quantity,
+        "price": price
+    })
+
+    # Remove the purchased REC from available trades
+    db["trades"].delete_one({"_id": ObjectId(trade_id)})
+
+    return jsonify({"success": True})
 if __name__ == '__main__':
     app.run(debug=True)
