@@ -55,14 +55,15 @@
     
                     <div class="profile-details">
                         <h3>Profile Details</h3>
-                        <p><strong>Name:</strong> <span id="profileName"> </span></p>
-                        <p><strong>Username:</strong> <span id="userName"> </span></p>
-                        <p><strong>Email:</strong> <span id="userEmail"> </span></p>
-                        <p><strong>Bio:</strong> <span id="profileBio"> </span></p>
-                        <p><strong>Location:</strong> <span id="profileLocation"> </span></p>
-                        <p><strong>No. of RECs:</strong> <span id="profileRECs">3</span></p>
-                        <p><strong>Watt Quantity:</strong> <span id="profileWatt">123 kWh</span></p>
-                        <p><strong>Energies Traded:</strong> <span id="profileEnergy">Solar</span></p>
+                        <p><strong>Name:</strong> {{ profile.profileName }}</p>
+                        <p><strong>Username:</strong> {{ profile.userName }}</p>
+                        <p><strong>Email:</strong> {{ profile.userEmail }}</p>
+                        <p><strong>Bio:</strong> {{ profile.profileBio }}</p>
+                        <p><strong>Location:</strong> {{ profile.profileLocation }}</p>
+                        <p><strong>No. of RECs:</strong> {{ profile.profileRECs }}</p>
+                        <p><strong>Watt Quantity:</strong> {{ profile.profileWatt }}</p>
+                        <p><strong>Energies Traded:</strong> {{ profile.profileEnergy }}</p>
+
     
                         <a href="{{ url_for('edit') }}" class="btn">Edit Profile</a>
                         <div><a href="{{ url_for('footprint') }}" class="btn">Footprint Tracker</a></div>
@@ -136,13 +137,13 @@
     </section>
 
     <script>
-         document.getElementById('profileName').textContent = localStorage.getItem('profileName') || 'Not set';
+         /*document.getElementById('profileName').textContent = localStorage.getItem('profileName') || 'Not set';
    
     document.getElementById('profileBio').textContent = localStorage.getItem('profileBio') || 'Not set';
     document.getElementById('profileLocation').textContent = localStorage.getItem('profileLocation') || 'Not set';
         // Get user data from localStorage
         const email = localStorage.getItem('userEmail');
-        const userName = localStorage.getItem('userName'); // Retrieve the name (from email or other source)
+        const userName = localStorage.getItem('userName'); // Retrieve the name (from email or other source)*/
     
         // Display the email and name in the profile section
         document.getElementById('userEmail').textContent = email;

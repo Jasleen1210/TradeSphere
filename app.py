@@ -57,10 +57,43 @@ def biogas():
     sellers, buyers = get_top_sellers_and_buyers('biogas')
     return render_template('biogas.html', sellers=sellers, buyers=buyers)
 
-
-@app.route('/profile')
+@app.route("/profile")
 def profile():
-    return render_template('profile.html')  # Serve profile.html at /profile
+    if "user_email" not in session:
+        return redirect(url_for("login"))  # Redirect if not logged in
+
+    user_email = session["user_email"]
+    user = db["user"].find_one({"email": user_email})
+
+    if user:
+        profile_data = {
+            "profileName": user.get("name", "Not Set"),
+            "userName": user.get("username", "Not Set"),
+            "userEmail": user.get("email", "Not Set"),
+            "profileBio": user.get("bio", "Not Set"),
+            "profileLocation": user.get("location", "Not Set"),
+            "profileRECs": user.get("recs", "Not Set"),
+            "profileWatt": user.get("watt_quantity", "Not Set"),
+            "profileEnergy": user.get("energies_traded", "Not Set"),
+        }
+    else:
+        # If the user is not found, set default values
+        profile_data = {
+            "profileName": "Not Set",
+            "userName": "Not Set",
+            "userEmail": "Not Set",
+            "profileBio": "Not Set",
+            "profileLocation": "Not Set",
+            "profileRECs": "Not Set",
+            "profileWatt": "Not Set",
+            "profileEnergy": "Not Set",
+        }
+
+    return render_template("profile.html", profile=profile_data)
+
+
+   
+
 @app.route('/payment')
 def payment():
     return render_template('payment.html')
@@ -122,7 +155,8 @@ def login():
     
     # Find the user by email in MongoDB
         user = users.find_one({"email": email})
-    
+        print(f"Login attempt for email: {email}")
+        print(f"User found: {user}")
         if user and check_password_hash(user["password"], password):
                 session["user_email"] = email 
                 return jsonify({"success": True})
