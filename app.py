@@ -23,8 +23,8 @@ trades = db["trade"]
 print("✅ Connected to database:", db.name)
 print("📂 Collections available:", db.list_collection_names())
 def get_top_sellers_and_buyers(resource):
-    supply_col = f"{resource}_supply (kWh)"
-    demand_col = f"{resource}_demand (kWh)"
+    supply_col = f"{resource}_supply (MWh)"
+    demand_col = f"{resource}_demand (MWh)"
     sellers = data[supply_col].drop_duplicates().sort_values(ascending=False).head(5).tolist()
     buyers = data[demand_col].drop_duplicates().sort_values(ascending=False).head(5).tolist()
     return sellers, buyers
