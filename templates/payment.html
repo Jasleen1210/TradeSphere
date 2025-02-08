@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI Payment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: #f4f4f4;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .btn {
+            display: block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .loading {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #qr-code {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Pay via UPI</h2>
+        <p>Scan the QR code or click the button below to pay.</p>
+        
+        <!-- QR Code -->
+        <img id="qr-code" src="" alt="UPI QR Code" width="200">
+
+        <!-- UPI Payment Button -->
+        <button id="upi-link" class="btn">Pay Now via UPI</button>
+
+        <!-- Loading Animation and Countdown -->
+        <div class="loading" id="loading-text">
+            Redirecting in <span id="countdown">3</span> seconds... 
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script>
+        const upiID = "trivedi.abhaya10@okicici"; 
+        const amount = "100"; // Amount in INR
+        const name = "TradeSphere";
+        const note = "Energy Trade Payment";
+
+        // Correct UPI Deep Link Format
+        const upiURL = `upi://pay?pa=${upiID}&pn=${encodeURIComponent(name)}&tn=${encodeURIComponent(note)}&am=${amount}&cu=INR`;
+
+        // Generate QR Code (Google Chart API)
+        document.getElementById("qr-code").src = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(upiURL)}&choe=UTF-8`;
+            // Button Click Event for Redirection
+            document.getElementById("upi-link").addEventListener("click", function(event) {
+                event.preventDefault();
+
+            // Show loading text and spinner
+            document.getElementById("loading-text").style.display = "block";
+            document.getElementById("upi-link").style.display = "none"; // Hide button
+
+            let count = 3;
+            const countdownInterval = setInterval(() => {
+                document.getElementById("countdown").innerText = count;
+                count--;
+
+                if (count < 0) {
+                    clearInterval(countdownInterval);
+                    window.location.href = upiURL; // Redirect to UPI app
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

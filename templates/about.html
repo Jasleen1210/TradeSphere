@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+</head>
+<body class="about">
+    <header>
+        <div class="logo-container"> 
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+            <h1>TradeSphere</h1>
+        </div>
+        <nav>
+            <ul class="navbar">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('about') }}">About</a></li>
+                <li><a href="{{ url_for('community') }}">Community</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-link">Trade</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('buy') }}">Buy</a></li>
+                        <li><a href="{{ url_for('trade') }}">Sell</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-link">Markets</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('solar') }}">Solar</a></li>
+                        <li><a href="{{ url_for('wind') }}">Wind</a></li>
+                        <li><a href="{{ url_for('biogas') }}">Biogas</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-link">Clients</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Corporate</a></li>
+                        <li><a href="#">Residential</a></li>
+                        <li><a href="#">Industrial</a></li>
+                    </ul>
+                </li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('profile') }}">My Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+
+    <section class="about-us">
+        <h2>About TradeSphere</h2>
+        <p>
+            TradeSphere is a platform designed to streamline renewable energy trading. Our mission is to empower individuals and organizations to contribute to a sustainable future by trading renewable energy resources efficiently and effectively. 
+        </p>
+        <p>
+            Built by a dedicated team of students with expertise in machine learning, backend development, and reporting, TradeSphere is the culmination of creativity, innovation, and teamwork.
+        </p>
+    </section>
+
+    <section class="team">
+        <h2>Meet Our Team</h2>
+        <div class="team-members">
+            <!-- Team Member 1 -->
+            <div class="team-member">
+                <div class="photo-placeholder">
+                    <img src="{{ url_for('static', filename='images/abhaya.jpg') }}" alt="Abhaya Trivedi">
+                </div>
+                <h3>Abhaya Trivedi</h3>
+                <p><strong>Contribution:</strong> FrontEnd Development, Machine Learning</p>
+                <p><strong>Email:</strong>abhaya002btaiml23@igdtuw.ac.in</p>
+                <p><a href="https://www.linkedin.com/in/abhayatrivedi" style="color:#1354cb">linkedin@abhayatrivedi</a></p>
+            </div>
+
+            <!-- Team Member 2 -->
+            <div class="team-member">
+                <div class="photo-placeholder">
+                    <img src="{{ url_for('static', filename='images/harshita.jpg') }}" alt="Harshita Soni">
+                </div>
+                <h3>Harshita Soni</h3>
+                <p><strong>Contribution:</strong> FrontEnd Development, Integration</p>
+                <p><strong>Email:</strong>harshita015btaiml23@igdtuw.ac.in</p>
+                <p><a href="https://www.linkedin.com/in/harshita-soni-414005286/" style="color:#1354cb">linkedin@harshitasoni</a></p>
+            </div>
+
+            <!-- Team Member 3 -->
+            <div class="team-member">
+                <div class="photo-placeholder">
+                    <img src="{{ url_for('static', filename='/images/riya.png') }}" alt="Riya Solanki">
+                </div>
+                <h3>Riya Solanki</h3>
+                <p><strong>Contribution:</strong> </p>
+                <p><strong>Email:</strong>Riya051btaiml23@igdtuw.ac.in</p>
+                <p><a href="https://www.linkedin.com/" style="color:#1354cb">linkedin@riyasolanki</a></p>
+            </div>
+            <div class="team-member">
+                <div class="photo-placeholder">
+                    <img src="{{ url_for('static', filename='/images/jasleen.png') }}" alt="Jasleen Kaur">
+                </div>
+                <h3>Jasleen Kaur</h3>
+                <p><strong>Contribution:</strong> Frontend Development</p>
+                <p><strong>Email:</strong>jasleenkaur@gmail.com</p>
+                <p><a href="https://www.linkedin.com/in/jasleen-kaur-abcdef/" style="color:#1354cb">linkedin@jasleenkaur</a></p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 TradeSphere. All rights reserved.</p>
+    </footer>
+</body>
+</html>

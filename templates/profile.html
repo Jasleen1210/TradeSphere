@@ -13,65 +13,70 @@
     <section>
         <header class="navig">
             <div class="logo-container">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
-                    <h1>TradeSphere</h1>
-                </div>
-                <nav>
-                    <ul class="navbar">
-                        <li><a href="{{ url_for('index') }}">Home</a></li>
-                        <li><a href="{{ url_for('about') }}">About</a></li>
-                        <li><a href="{{ url_for('community') }}">Community</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-link">Trade</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{{ url_for('buy') }}">Buy</a></li>
-                                <li><a href="{{ url_for('trade') }}">Sell</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-link">Markets</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{{ url_for('solar') }}">Solar</a></li>
-                                <li><a href="{{ url_for('wind') }}">Wind</a></li>
-                                <li><a href="{{ url_for('biogas') }}">Biogas</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-link">Clients</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Corporate</a></li>
-                                <li><a href="#">Residential</a></li>
-                                <li><a href="#">Industrial</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="{{ url_for('login') }}">Login</a></li>
-                    </ul>
-                </nav>
-            </header>
-            
-            
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                <h1>TradeSphere</h1>
+            </div>
+            <nav>
+                <ul class="navbar">
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('about') }}">About</a></li>
+                    <li><a href="{{ url_for('community') }}">Community</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-link">Trade</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('buy') }}">Buy</a></li>
+                            <li><a href="{{ url_for('trade') }}">Sell</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-link">Markets</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('solar') }}">Solar</a></li>
+                            <li><a href="{{ url_for('wind') }}">Wind</a></li>
+                            <li><a href="{{ url_for('biogas') }}">Biogas</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-link">Clients</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Corporate</a></li>
+                            <li><a href="#">Residential</a></li>
+                            <li><a href="#">Industrial</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                </ul>
+            </nav>
+        </header>
+    
         <div class="container">
             <main>
-            <div class="profile-container">
-                <h2>User Profile</h2>
-
-                <div class="profile-details">
-                    <h3>Profile Details</h3>
-                    <p><strong>Name:</strong> <span id="profileName"> </span></p>
-                    <p><strong>Username:</strong> <span id="userName"> </span></p>
-                    <p><strong>Email:</strong> <span id="userEmail"> </span></p>
-                    <p><strong>Bio:</strong> <span id="profileBio"> </span></p>
-                    <p><strong>Location:</strong> <span id="profileLocation"> </span></p>
-                    <p><strong>No. of RECs:</strong> <span id="profileRECs">3</span></p>
-                    <p><strong>Watt Quantity:</strong> <span id="profileWatt">123 kWh</span></p>
-                    <p><strong>Energies Traded:</strong> <span id="profileEnergy">Solar</span></p>
-                    
-                    <a href="{{ url_for('edit') }}" class="btn">Edit Profile</a>
+                <div class="profile-container">
+                    <h2>User Profile</h2>
+    
+                    <div class="profile-details">
+                        <h3>Profile Details</h3>
+                        <p><strong>Name:</strong> <span id="profileName"> </span></p>
+                        <p><strong>Username:</strong> <span id="userName"> </span></p>
+                        <p><strong>Email:</strong> <span id="userEmail"> </span></p>
+                        <p><strong>Bio:</strong> <span id="profileBio"> </span></p>
+                        <p><strong>Location:</strong> <span id="profileLocation"> </span></p>
+                        <p><strong>No. of RECs:</strong> <span id="profileRECs">3</span></p>
+                        <p><strong>Watt Quantity:</strong> <span id="profileWatt">123 kWh</span></p>
+                        <p><strong>Energies Traded:</strong> <span id="profileEnergy">Solar</span></p>
+    
+                        <a href="{{ url_for('edit') }}" class="btn">Edit Profile</a>
+                        <div><a href="{{ url_for('footprint') }}" class="btn">Footprint Tracker</a></div>
+                    </div>
                 
-<div><a href="{{ url_for('footprint') }}" class="btn">Footprint Tracker</a></div>
-
-                </div>
-
+                    <div class="wallet-container">
+                        <h2>Paytm Wallet</h2>
+                        <p><strong>Wallet Balance:</strong> <span id="walletBalance">0</span> INR</p>
+                        <label for="walletAmount">Enter Amount:</label>
+                        <input type="number" id="walletAmount" placeholder="Enter amount" min="1">
+                        <button id="useWallet" class="btn">Use Wallet</button>
+                        <button id="addMoney" class="btn secondary">Add Money</button>
+                    </div>
                 <div class="order-container">
                     <h2>Your Orders</h2>
                     <button id="filterBtn">Filter Orders</button>
@@ -99,35 +104,38 @@
                         <canvas id="ordersChart"></canvas>
                     </div>
                 </div>
-        </main>
-    </div>
-    <div id="filterModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Filter Orders</h3>
-            
-            <div class="radio-group">
-                <h4>Energy Type:</h4>
-                <label><input type="checkbox" name="energyType" value="Solar"> Solar</label><br>
-                <label><input type="checkbox" name="energyType" value="Wind"> Wind</label><br>
-                <label><input type="checkbox" name="energyType" value="Biogas"> Biogas</label><br>
-                <label><input type="checkbox" name="energyType" value="All" checked> All</label>
-            </div>
-            
-            <div class="radio-group">
-                <h4>Status:</h4>
-                <label><input type="checkbox" name="status" value="Completed"> Completed</label><br>
-                <label><input type="checkbox" name="status" value="Pending"> Pending</label><br>
-                <label><input type="checkbox" name="status" value="In Progress"> In Progress</label><br>
-                <label><input type="checkbox" name="status" value="Cancelled"> Cancelled</label><br>
-                <label><input type="checkbox" name="status" value="All" checked> All</label>
-            </div>
-            
-            
-            <button id="applyFilterBtn">Apply Filter</button>
+            </main>
         </div>
-    </div>
+    
+       
+    
+        <div id="filterModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Filter Orders</h3>
+    
+                <div class="radio-group">
+                    <h4>Energy Type:</h4>
+                    <label><input type="checkbox" name="energyType" value="Solar"> Solar</label><br>
+                    <label><input type="checkbox" name="energyType" value="Wind"> Wind</label><br>
+                    <label><input type="checkbox" name="energyType" value="Biogas"> Biogas</label><br>
+                    <label><input type="checkbox" name="energyType" value="All" checked> All</label>
+                </div>
+    
+                <div class="radio-group">
+                    <h4>Status:</h4>
+                    <label><input type="checkbox" name="status" value="Completed"> Completed</label><br>
+                    <label><input type="checkbox" name="status" value="Pending"> Pending</label><br>
+                    <label><input type="checkbox" name="status" value="In Progress"> In Progress</label><br>
+                    <label><input type="checkbox" name="status" value="Cancelled"> Cancelled</label><br>
+                    <label><input type="checkbox" name="status" value="All" checked> All</label>
+                </div>
+    
+                <button id="applyFilterBtn">Apply Filter</button>
+            </div>
+        </div>
     </section>
+
     <script>
          document.getElementById('profileName').textContent = localStorage.getItem('profileName') || 'Not set';
    
@@ -274,6 +282,32 @@ function filterOrders(energyTypes, statuses) {
     // After filtering, regenerate the chart with updated data
     generateChart();
 }
+document.getElementById("useWallet").addEventListener("click", function () {
+    let amount = parseInt(document.getElementById("walletAmount").value);
+
+    if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid amount to use from the wallet.");
+        return;
+    }
+
+    let walletBalance = parseInt(localStorage.getItem("walletBalance")) || 0;
+
+    if (amount > walletBalance) {
+        alert("Insufficient wallet balance!");
+        return;
+    }
+
+    // Deduct the amount from the wallet
+    walletBalance -= amount;
+    localStorage.setItem("walletBalance", walletBalance);
+    document.getElementById("walletBalance").textContent = walletBalance + " INR";
+
+    // Store transaction amount for payment page
+    localStorage.setItem("walletTransactionAmount", amount);
+
+    // Redirect to payment.html
+    window.location.href = "payment.html";
+});
 
     </script>
         

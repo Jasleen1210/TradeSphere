@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Profile</h2>
+        <form id="editProfileForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+
+            <label for="bio">Bio:</label>
+            <textarea id="bio" rows="3" ></textarea>
+
+            <label for="location">Location:</label>
+            <input type="text" id="location" required>
+            <div class="button-container">
+                <button type="submit">Save Changes</button>
+                <a href="{{ url_for('profile') }}" class="btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Load existing profile data from localStorage
+        document.getElementById('name').value = localStorage.getItem('profileName') || '';
+        document.getElementById('username').value = localStorage.getItem('userName') || '';
+        document.getElementById('bio').value = localStorage.getItem('profileBio') || '';
+        document.getElementById('location').value = localStorage.getItem('profileLocation') || '';
+
+        // Save updated profile details
+        document.getElementById('editProfileForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            localStorage.setItem('profileName', document.getElementById('name').value);
+            localStorage.setItem('userName', document.getElementById('username').value);
+            localStorage.setItem('profileBio', document.getElementById('bio').value);
+            localStorage.setItem('profileLocation', document.getElementById('location').value);
+
+            // Redirect to profile page
+            window.location.href = "{{ url_for('profile') }}";
+        });
+    </script>
+</body>
+</html>
