@@ -6,6 +6,10 @@
     <title>Biogas Energy</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/biogas.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/market.css') }}">
+    <script src="/static/js/market.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
@@ -17,13 +21,7 @@
             <ul class="navbar">
                 <li><a href="{{ url_for('index') }}">Home</a></li>
                 <li><a href="{{ url_for('about') }}">About</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-link">Trade</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ url_for('buy') }}">Buy</a></li>
-                        <li><a href="{{ url_for('trade') }}">Sell</a></li>
-                    </ul>
-                </li>
+                <li><a href="{{ url_for('trade') }}">Trade</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-link">Markets</a>
                     <ul class="dropdown-menu">
@@ -45,31 +43,74 @@
             </ul>
         </nav>
     </header>
+<!-- Popup modal -->
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <button class="close-btn" onclick="closePopup()">X</button>
+        <h2>Buy RECs</h2>
+        
+        <label for="quantity">Enter Quantity:</label>
+        <input type="number" id="quantity" min="1" oninput="updatePrice()" placeholder="Enter number of RECs">
+        
+        <p><strong>Final Price:</strong> <span id="final-price">₹0</span></p>
+        <button class="buy-btn" onclick="submitRequest()">Buy Now</button>
+    </div>
+</div>
+<!-- Success modal -->
+<div id="success-popup" class="popup">
+    <div class="popup-content">
+        <p class="success-message">Request has been sent!</p>
+    </div>
+</div>
 
-    <section>
-        <!-- Top Sellers Section -->
-        <div class="card">
-            <h2>Top Sellers</h2>
-            <ul>
-                {% for seller in sellers %}
-                <li>{{ seller }} kW/h</li>
-                {% endfor %}
-            </ul>
-            <button onclick="location.href='/trade?type=buy&resource=biogas'">Buy</button>
+    <main class="container-buyer">
+        <div class="grid-container">
+            <!-- Chart Section -->
+            <div class="chart-container">
+                <h2>Biogas Energy Prediction</h2>
+                <canvas id="stockChart"></canvas>
+            </div>
+
+            <!-- Cards Section -->
+             <div class="main-cards">
+                 <div class="card" onclick="showPopup(90)">
+                     <h3>BioPure Energy Pvt. Ltd.</h3>
+                     <div class="price">
+                         <span class="number-recs">950 RECs</span>
+                    <span class="price-per-rec">90 per MWh</span>
+                </div>
+                <div class="location">
+                    <span class="city">Suresh Patil</span>
+                    <span class="state"></span>
+                </div>
+            </div>
+    
+            <div class="card" onclick="showPopup(110)">
+                <h3>EcoMethane Solutions</h3>
+                <div class="price">
+                    <span class="number-recs">1900 RECs</span>
+                    <span class="price-per-rec">110 per MWh</span>
+                </div>
+                <div class="location">
+                    <span class="city">Ritu Agarwal</span>
+                    <span class="state"></span>
+                </div>
+            </div>
+            
+            <div class="card" onclick="showPopup(78)">
+                <h3>GreenFlame Biogas Ltd</h3>
+                <div class="price">
+                    <span class="number-recs">1800 RECs</span>
+                    <span class="price-per-rec">78 per MWh</span>
+                </div>
+                <div class="location">
+                    <span class="city">Varun Joshi</span>
+                    <span class="state"></span>
+                </div>
+            </div>
         </div>
-
-        <!-- Top Buyers Section -->
-        <div class="card">
-            <h2>Top Buyers</h2>
-            <ul>
-                {% for buyer in buyers %}
-                <li>{{ buyer }} kW/h</li>
-                {% endfor %}
-            </ul>
-            <button onclick="location.href='/trade?type=sell&resource=biogas'">Sell</button>
         </div>
-    </section>
-
+    </main>
     <!-- Community Forum Section -->
     <div class="community-forum">
         <h2>Community Forum: Last Hour</h2>
@@ -127,6 +168,21 @@
                 window.addEventListener("load", onLoad);
             }
         })();
+
+        //graph!
+        const ctx = document.getElementById('stockChart').getContext('2d');
+        const stockData = {
+            labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00'],
+            datasets: [{
+                label: 'REC Stock Price (₹)',
+                data: [245, 248, 250, 252, 255, 250],
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 2
+            }]
+        };
+        new Chart(ctx, { type: 'line', data: stockData });
+    </script>
     </script>
 </body>
 </html>

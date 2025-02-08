@@ -53,13 +53,8 @@
                 <ul class="navbar">
                     <li><a href="{{ url_for('index') }}">Home</a></li>
                     <li><a href="{{ url_for('about') }}">About</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-link">Trade</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ url_for('buy') }}">Buy</a></li>
-                            <li><a href="{{ url_for('trade') }}">Sell</a></li>
-                        </ul>
-                    </li>
+                    <li><a href="{{ url_for('trade') }}">Trade</a></li>
+                
                     <li class="dropdown">
                         <a href="#" class="dropdown-link">Markets</a>
                         <ul class="dropdown-menu">

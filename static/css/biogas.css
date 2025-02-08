@@ -79,9 +79,8 @@ button:hover {
 }
 
 .community-forum h2 {
-    font-size: 2rem;
-    color: #32cd32; /* Green heading */
-    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #28a745; 
 }
 
 /* Slider Styling */
