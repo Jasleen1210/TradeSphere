@@ -5,8 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trade Surplus Energy - TradeSphere</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/popup.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+    <style>
+        #trade-popup {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 50%; 
+            top: 50%; 
+            transform: translate(-50%, -50%); 
+            background-color: white; 
+            padding: 20px; 
+            border: 2px solid #007bff; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        #trade-popup.show {
+            display: block;
+        }
+
+        #trade-popup button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #trade-popup button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div class="trade-container">
@@ -68,8 +101,11 @@
                     <label for="price">Price per kWh (INR):</label>
                     <input type="
                     number" id="price" placeholder="Enter price per kWh" required>
+                    
                     <button type="submit" class="btn">Submit Trade</button>
+                    
                 </form>
+                <a href="{{ url_for('buy') }}"> buy</a>
             </div>
         </div>
     </div>
@@ -80,8 +116,64 @@
         <p>Your trade has been successfully recorded.</p>
         <button onclick="closePopup()">Close</button>
     </div>
-<script src='/static/js/script.js'></script>
+
     <script>
+            document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('trade-form');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+          // Get trade details
+            const energyType = document.getElementById("energy-type").value;
+            const quantity = document.getElementById("quantity").value;
+            const price = document.getElementById("price").value;
+        
+
+        // Check if user is logged in (session storage)
+        const userEmail = sessionStorage.getItem("userEmail");
+        if (!userEmail) {
+            alert("You must be logged in to submit a trade. Redirecting to login...");
+            window.location.href = "/login";
+            return;
+        }
+
+        // Send trade data to Flask backend
+        fetch("/submit_trade", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: userEmail, // Automatically include logged-in user email
+                energyType: energyType,
+                quantity: quantity,
+                price: price
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById("trade-popup").classList.add("show"); // Show success popup
+                form.reset(); // Reset form
+            } else {
+                alert(data.error || "Trade submission failed!");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred while submitting the trade.");
+                // Show Custom Popup
+                const popup = document.getElementById('trade-popup');
+                popup.classList.add('show');
+
+                // Auto-close popup after 3 seconds and redirect to payment page
+                setTimeout(function() {
+                    closePopup();
+                    window.location.href = "payment.html";  // Redirect to payment page
+                }, 3000);  // 3 seconds delay
+            });
+        });
+    });
+
         function closePopup() {
             document.getElementById('trade-popup').classList.remove('show');
         }

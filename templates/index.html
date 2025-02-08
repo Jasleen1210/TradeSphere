@@ -4,115 +4,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradeSphere - Renewable Energy Trading</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
 </head>
 <body>
- <!-- Navbar  -->
-    <header>
-        <div class="logo-container">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
-            <h1>TradeSphere</h1>
+    <!-- Header Section -->
+    <!-- Hero Section -->
+    <!-- <section class="hero" style="background-image: url('{{ url_for('static', filename='images/bg.jpg') }}');"> -->
+        <section class="landing">
+            <div class="slideshow">
+                <div class="slides">
+                    <img class="slide" src="/static/images/home1.jpg" alt="Slide 1">
+                    <img class="slide" src="/static/images/home2.jpg" alt="Slide 2">
+                    <img class="slide" src="/static/images/home3.jpg" alt="Slide 3">
+                    <img class="slide" src="/static/images/home1.jpg" alt="Slide 1">
+                </div>
+                <div class="overlays">
+                    <header>
+                        <div class="logo-container">
+                            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                            <h1>TradeSphere</h1>
+                        </div>
+                        <nav>
+                            <ul class="navbar">
+                                <li><a href="{{ url_for('index') }}">Home</a></li>
+                                <li><a href="{{ url_for('about') }}">About</a></li>
+                                <li><a href="{{ url_for('community') }}">Community</a></li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-link">Trade</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="{{ url_for('buy') }}">Buy</a></li>
+                                        <li><a href="{{ url_for('trade') }}">Sell</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-link">Markets</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="{{ url_for('solar') }}">Solar</a></li>
+                                        <li><a href="{{ url_for('wind') }}">Wind</a></li>
+                                        <li><a href="{{ url_for('biogas') }}">Biogas</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-link">Clients</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">Corporate</a></li>
+                                        <li><a href="#">Residential</a></li>
+                                        <li><a href="{{ url_for('footprint') }}">Industrial</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="{{ url_for('login') }}">Login</a></li>
+                                <li><a href="{{ url_for('profile') }}">My Profile</a></li>
+                            </ul>
+                        </nav>
+                    </header>
+                    <section class="hero">
+                    <h1>Welcome to TradeSphere</h1>
+                    <p>Your Renewable Energy Trading Platform</p>
+                    <a href="#features" class="btn">Get Started</a>
+                    </section>
+
+                </div>
+            </section>
+    <section class="map-container">
+        <div class="map">
+            <h1>Powering Landscapes Across the Globe</h1>
+            <iframe src="https://www.google.com/maps/d/embed?mid=1W5RzaiQjZbcH2TLy10OJAviJ8hSPKG8&ehbc=2E312F&noprof=1" width="790" height="500"></iframe>
         </div>
-        <nav>
-            <ul class="navbar">
-                <li><a href="#">Community</a></li>
-                <li><a href="#">Trade</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-link">Markets</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Solar</a></li>
-                        <li><a href="#">Wind</a></li>
-                        <li><a href="#">Biogas</a></li>
+    </section>
+    
+    <section class="features" id="features">
+        <video autoplay loop muted class="bg-video">
+            <source src="/static/video/27947-366570961.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="bg-overlay"></div>
+
+        <!-- <h2>Explore Renewable Resources</h2> -->
+            <div class="feature-cards">
+                <!-- Solar Energy Card -->
+                <div class="feature-card" id="card1">
+                    <h3 class="link"><a href="{{ url_for('solar') }}">Solar Energy</a></h3>
+                    <div class="extra-content">
+                        <p>Energy from the sun converted into electricity or heat.</p>
+                        <p><strong>Top Sellers:</strong></p>
+                        <ul>
+                            {% for seller in solar_sellers %}
+                            <li>{{ seller }} kW/h</li>
+                            {% endfor %}
+                        </ul>
+                        <p><strong>Top Buyers:</strong></p>
+                        <ul>
+                            {% for buyer in solar_buyers %}
+                            <li>{{ buyer }} kW/h</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Wind Energy Card -->
+                <div class="feature-card" id="card2">
+                    <h3 class="link"><a href="{{ url_for('wind') }}">Wind Energy</a></h3>
+                    <div class="extra-content">
+                    <p>Harnessing the power of wind to generate electricity.</p>
+                    <p><strong>Top Sellers:</strong></p>
+                    <ul>
+                        {% for seller in wind_sellers %}
+                        <li>{{ seller }} kW/h</li>
+                        {% endfor %}
                     </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-link">Clients</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Corporate</a></li>
-                        <li><a href="#">Residential</a></li>
-                        <li><a href="#">Installer</a></li>
+                    <p><strong>Top Buyers:</strong></p>
+                    <ul>
+                        {% for buyer in wind_buyers %}
+                        <li>{{ buyer }} kW/h</li>
+                        {% endfor %}
                     </ul>
-                </li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Login</a></li>
-            </ul>
-        </nav>
-    </header>
-         \\hero section
-        <section class="hero" style="background-image: url('/static/images/bg.jpg');">
-        <h1>Welcome to TradeSphere</h1>
-        <p>Your Renewable Energy Trading Platform</p>
-        <a href="#" class="btn">Get Started</a>
+                </div>
+                </div>
+                
+                <!-- Biogas Energy Card -->
+                <div class="feature-card" id="card3">
+                    <h3 class="link"><a href="{{ url_for('biogas') }}">Biogas</a></h3>
+                    <div class="extra-content">
+                    <p> Generated by breaking down organic matter in the absence of oxygen.</p>
+                    <p><strong>Top Sellers:</strong></p>
+                    <ul>
+                        {% for seller in biogas_sellers %}
+                        <li>{{ seller }} kW/h</li>
+                        {% endfor %}
+                    </ul>
+                    <p><strong>Top Buyers:</strong></p>
+                    <ul>
+                        {% for buyer in biogas_buyers %}
+                        <li>{{ buyer }} kW/h</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </div>
     </section>
 
-    <!-- Card div explaning solar, wind, biogas energy -->
-    <section class="features" id="features">
-        <h2>Explore Renewable Resources</h2>
-        <div class="feature-cards">
-            <div class="feature-card">
-                <h3><a href="#">Solar Energy</a></h3>
-                <p>Energy from the sun converted into electricity or heat.</p>
-                <p><strong>Top Sellers:</strong></p>
-                <ul>
-                    {% for seller in solar_sellers %}
-                    <li>{{ seller }} kW/h</li>
-                    {% endfor %}
-                </ul>
-                <p><strong>Top Buyers:</strong></p>
-                <ul>
-                    {% for buyer in solar_buyers %}
-                    <li>{{ buyer }} kW/h</li>
-                    {% endfor %}
-                </ul>
-            </div>
-    
-           
-            <div class="feature-card">
-                <h3><a href="#">Wind Energy</a></h3>
-                <p>Harnessing the power of wind to generate electricity.</p>
-                <p><strong>Top Sellers:</strong></p>
-                <ul>
-                    {% for seller in wind_sellers %}
-                    <li>{{ seller }} kW/h</li>
-                    {% endfor %}
-                </ul>
-                <p><strong>Top Buyers:</strong></p>
-                <ul>
-                    {% for buyer in wind_buyers %}
-                    <li>{{ buyer }} kW/h</li>
-                    {% endfor %}
-                </ul>
-            </div>
-    
-            <div class="feature-card">
-                <h3><a href="#">Biogas</a></h3>
-                <p> Generated by breaking down organic matter in the absence of oxygen.</p>
-                <p><strong>Top Sellers:</strong></p>
-                <ul>
-                    {% for seller in biogas_sellers %}
-                    <li>{{ seller }} kW/h</li>
-                    {% endfor %}
-                </ul>
-                <p><strong>Top Buyers:</strong></p>
-                <ul>
-                    {% for buyer in biogas_buyers %}
-                    <li>{{ buyer }} kW/h</li>
-                    {% endfor %}
-                </ul>
-            </div>
-    
-            <div class="feature-card">
-                <h3><a href="#">Community</a></h3>
-                <p>A space for discussions, collaborations, and podcasts.</p>
-                <p><strong>Features:</strong></p>
-                <ul>
-                    <li>Discussion Forum</li>
-                    <li>Podcasts and More...</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-    <footer>
+    <!-- Footer Section -->
+    <footer class="main-page">
         <p>&copy; 2024 TradeSphere. All rights reserved.</p>
     </footer>
 </body>
