@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TradeSphere</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <img src="{{ url_for('static', filename='images/home2.jpg') }}" alt="Background" class="background">
+    <header>
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                <h1>TradeSphere</h1>
+            </div>
+            <nav>
+                <ul class="navbar">
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('about') }}">About</a></li>
+                    <li><a href="{{ url_for('community') }}">Community</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-link">Trade</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('buy') }}">Buy</a></li>
+                            <li><a href="{{ url_for('trade') }}">Sell</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-link">Markets</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('solar') }}">Solar</a></li>
+                            <li><a href="{{ url_for('wind') }}">Wind</a></li>
+                            <li><a href="{{ url_for('biogas') }}">Biogas</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-link">Clients</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Corporate</a></li>
+                            <li><a href="#">Residential</a></li>
+                            <li><a href="#">Industrial</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    
+                </ul>
+            </nav>
+        </header>
+        
+        <div class="container">
+        <div class="content">
+            <div class="form-box">
+                <h2>Register for TradeSphere</h2>
+                {% if error %}
+                <p style="color: red;">{{ error }}</p>
+            {% endif %}
+                <form action="/register" method="POST">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                    
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    
+                    <button type="submit" class="btn">Register</button>
+                </form>
+                <p>Already have an account?</p>
+                <a href="{{ url_for('login') }}" class="btn secondary">Login Here</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
