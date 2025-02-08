@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TradeSphere</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+</head>
+<body>
+    <img src="{{ url_for('static', filename='images/home2.jpg') }}" alt="Background" class="background">
+    <header>
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+        <h1>TradeSphere</h1>
+    </div>
+    <nav>
+        <ul class="navbar">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('community') }}">Community</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-link">Trade</a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('buy') }}">Buy</a></li>
+                    <li><a href="{{ url_for('trade') }}">Sell</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-link">Markets</a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('solar') }}">Solar</a></li>
+                    <li><a href="{{ url_for('wind') }}">Wind</a></li>
+                    <li><a href="{{ url_for('biogas') }}">Biogas</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-link">Clients</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Corporate</a></li>
+                    <li><a href="#">Residential</a></li>
+                    <li><a href="#">Industrial</a></li>
+                </ul>
+            </li>
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+        </ul>
+    </nav>
+</header>
+
+    
+    <div class="container">
+        <div class="content">
+            <div class="form-box">
+                <h2>Login to TradeSphere</h2>
+                <form id="loginForm">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+                <p>Don't have an account?</p>
+                <a href="{{ url_for('register') }}" class="btn secondary">Register Here</a>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <!-- <script>
+        // Add event listener for form submission
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Get user inputs
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Store email and password in localStorage
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userPassword', password);
+
+            // Optionally, you can store more user data such as name here as well
+            localStorage.setItem('userName', email.split('@')[0]); // Example: Using the part before @ in email as the name
+
+            // Redirect to profile page
+            window.location.href = 'profile.html';
+        });
+    </script> -->
+</body>
+</html>

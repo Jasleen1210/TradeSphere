@@ -1,0 +1,305 @@
+body, html {
+    height: 100%;
+    margin-bottom: 4%;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    
+}
+body {
+    background-color:#7ba581;
+
+}
+.navig{
+   
+    background-color:#7ba581;
+    
+}
+.container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden; 
+    /* height: 100vh; */
+}
+
+.background {
+    position: fixed; /* Stays in place during scrolling */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-size: cover;        /* Cover the entire screen */
+    background-position: center;   /* Center the image */
+    background-repeat: no-repeat;  /* Prevent tiling */
+    object-fit: cover;
+    z-index: -1;
+    transition: transform 0.3s ease; /* Smooth hover effect */
+}
+
+/* Add a semi-transparent dark overlay for better text visibility */
+.background::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Dark overlay */
+    z-index: 1;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.form-box {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px 40px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    text-align: left;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, select {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 2%;
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
+
+.btn.secondary {
+    margin-top: 20 px;
+    background-color: #4CAF50;
+}
+
+.btn.secondary:hover {
+    background-color:#4CAF50;
+}
+
+p {
+    margin: 15px 0 15px;
+}
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; 
+}
+
+.profile-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 800px;
+    text-align: left; /* Ensure text is left-aligned */
+}
+
+.profile-container h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: black;
+    margin-bottom: 20px;
+}
+.profile-details,
+.recent-activity {
+    margin-bottom: 20px;
+}
+
+.profile-details h3,
+.recent-activity h3 {
+    font-size: 1.5rem;
+    color: black;
+    margin-bottom: 10px;
+}
+
+.profile-details p {
+    font-size: 1rem;
+    color: black;
+    margin: 5px 0;
+}
+
+.profile-details button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.profile-details button:hover {
+    background-color: #45a049;
+}
+
+.recent-activity ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.recent-activity li {
+    font-size: 1rem;
+    color: black;
+    margin-bottom: 10px;
+}
+
+.order-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    max-width: 900px;
+    text-align: left;
+}
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+}
+.orders-table th, .orders-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+.orders-table th {
+    background-color: #4CAF50;
+    color: white;
+}
+.chart-container {
+    width: 100%;
+    height: 350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(60, 154, 46, 0);
+    padding-top: 60px;
+}
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.radio-group {
+    margin: 15px 0;
+}
+/* Button styling for Filter and Apply Filter */
+button {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+/* Green theme for the 'Filter Orders' button */
+#filterBtn {
+    background-color: #4CAF50;
+    color: white;
+    margin-bottom: 2%;
+}
+
+/* Green theme for the 'Apply Filter' button */
+#applyFilterBtn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Hover effects for both buttons */
+button:hover {
+    background-color: #45a049; /* Darker green */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Focus state */
+button:focus {
+    outline: none;
+}
+
+/* Modal button style */
+button:active {
+    background-color: #388e3c; /* Even darker green on click */
+}
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: green;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: darkgreen;
+}
