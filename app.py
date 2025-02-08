@@ -6,7 +6,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId
 from dotenv import load_dotenv
 import os
-
+from sklearn.model_selection import train_test_split
+import pandas as pd
+import numpy as np
+from sklearn.svm import SVR
+from xgboost import XGBRegressor
+from sklearn.preprocessing import MinMaxScaler, PolynomialFeatures
 load_dotenv()
 
 # Read MongoDB URI from environment
@@ -28,6 +33,96 @@ def get_top_sellers_and_buyers(resource):
     sellers = data[supply_col].drop_duplicates().sort_values(ascending=False).head(5).tolist()
     buyers = data[demand_col].drop_duplicates().sort_values(ascending=False).head(5).tolist()
     return sellers, buyers
+csv_file_path = "ledger.csv"
+df = pd.read_csv(csv_file_path)
+
+# Convert timestamp and extract features
+df["Timestamp"] = pd.to_datetime(df["Timestamp"], unit="s")
+df["DayOfYear"] = df["Timestamp"].dt.dayofyear
+df["Month"] = df["Timestamp"].dt.month
+df["Weekday"] = df["Timestamp"].dt.weekday
+
+# Filter Solar REC data
+df_solar = df[df["Energy_Type"] == "Solar"].copy()
+
+# Create Lag Features (Last 3 Days Prices)
+df_solar["Prev_Day_Price"] = df_solar["Price (ETH)"].shift(1)
+df_solar["Prev_2_Day_Price"] = df_solar["Price (ETH)"].shift(2)
+df_solar["Prev_3_Day_Price"] = df_solar["Price (ETH)"].shift(3)
+
+# 🔹 Fix: Fill NaN values properly
+df_solar.fillna(method='ffill', inplace=True)  # Forward fill missing values
+df_solar.fillna(df_solar["Price (ETH)"].mean(), inplace=True)  # If still NaN, replace with mean price
+
+# Prepare dataset
+features = ['DayOfYear', 'Quantity (MWh)', 'Month', 'Weekday', 
+            'Prev_Day_Price', 'Prev_2_Day_Price', 'Prev_3_Day_Price']
+X = df_solar[features].values
+y = df_solar['Price (ETH)'].values
+
+# Verify no NaNs exist
+if np.isnan(X).any() or np.isnan(y).any():
+    raise ValueError("Data still contains NaN values after preprocessing.")
+
+# Apply Polynomial Features
+poly = PolynomialFeatures(degree=2, include_bias=False)
+X_poly = poly.fit_transform(X)
+
+# Normalize data
+scaler = MinMaxScaler()
+X_scaled = scaler.fit_transform(X_poly)
+
+# Train XGBoost Model
+model = XGBRegressor(n_estimators=200, learning_rate=0.05, max_depth=5)
+model.fit(X_scaled, y)
+
+# Predict the next 7 days
+future_days = np.array(range(df["DayOfYear"].max() + 1, df["DayOfYear"].max() + 8)).reshape(-1, 1)
+future_quantities = np.full((7, 1), np.mean(df_solar["Quantity (MWh)"]))  # Use avg quantity
+future_months = np.full((7, 1), df["Month"].max())
+future_weekdays = [(df["Timestamp"].max() + pd.Timedelta(days=i)).weekday() for i in range(1, 8)]
+
+# Use last 3 real prices as initial guess
+last_prices = df_solar["Price (ETH)"].iloc[-3:].values
+future_prices_list = []
+
+for i in range(7):
+    prev_price_1 = last_prices[-1]
+    prev_price_2 = last_prices[-2]
+    prev_price_3 = last_prices[-3]
+    
+    future_X = np.array([[future_days[i][0], future_quantities[i][0], future_months[i][0], 
+                          future_weekdays[i], prev_price_1, prev_price_2, prev_price_3]])
+    
+    future_X_poly = poly.transform(future_X)
+    future_X_scaled = scaler.transform(future_X_poly)
+    
+    predicted_price = model.predict(future_X_scaled)[0]
+    
+    # Prevent negative prices & add slight variation to avoid constant values
+    predicted_price = max(predicted_price + np.random.normal(0, 0.005), 0)
+    
+    # Append and shift prices
+    future_prices_list.append(predicted_price)
+    last_prices = np.roll(last_prices, -1)
+    last_prices[-1] = predicted_price
+
+# Convert predictions to JSON
+@app.route("/solar_predictions")
+def get_solar_predictions():
+    last_date = df["Timestamp"].max()  # Last actual data point
+    future_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=7, freq="D")  # Continue from last date
+    
+    predictions = {
+        "dates": future_dates.strftime("%Y-%m-%d").tolist(),
+        "prices": [float(price) for price in future_prices_list]  # Convert float32 to Python float
+    }
+    return jsonify(predictions)
+
+@app.route("/solar")
+def solar():
+    
+    return render_template("solar.html")
 
 @app.route('/')
 def index():
@@ -44,10 +139,10 @@ def index():
         biogas_buyers=biogas_buyers,
     )
 
-@app.route('/solar')
-def solar():
-    sellers, buyers = get_top_sellers_and_buyers('solar')
-    return render_template('solar.html', sellers=sellers, buyers=buyers)
+#@app.route('/solar')
+#def solar():
+ #   sellers, buyers = get_top_sellers_and_buyers('solar')
+  #  return render_template('solar.html', sellers=sellers, buyers=buyers)
 @app.route('/wind')
 def wind():
     sellers, buyers = get_top_sellers_and_buyers('wind')

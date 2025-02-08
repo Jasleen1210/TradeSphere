@@ -119,8 +119,20 @@
                 {% for i in range(10) %}
                 <div class="slide">
                     <p>
-                        <strong>{{ sellers[i % sellers|length] }}</strong> watts of solar energy sold by 
-                        <strong>{{ ['Shyam', 'Anita', 'Raj', 'Preeti', 'Aman', 'Rahul', 'Priya', 'Karan', 'Meena', 'Aarti'][i] }}</strong> 
+                        {% if sellers %}
+    {% for i in range(10) %}
+        <div class="slide">
+            <p>
+                <strong>{{ sellers[i % sellers|length] }}</strong> watts of solar energy sold by
+                <strong>{{ ['Shyam', 'Anita', 'Raj', 'Preeti', 'Aman'][i % 5] }}</strong>
+            </p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No sellers available.</p>
+{% endif %}
+
+                       
                         from <strong>{{ ['Delhi', 'Mumbai', 'Ahmedabad', 'Jaipur', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune', 'Kolkata', 'Lucknow'][i] }}</strong>, India.
                     </p>
                 </div>
@@ -128,8 +140,18 @@
                 {% for i in range(10) %}
                 <div class="slide">
                     <p>
-                        <strong>{{ sellers[i % sellers|length] }}</strong> watts of solar energy sold by 
-                        <strong>{{ ['Shyam', 'Anita', 'Raj', 'Preeti', 'Aman', 'Rahul', 'Priya', 'Karan', 'Meena', 'Aarti'][i] }}</strong> 
+                        {% if sellers %}
+    {% for i in range(10) %}
+        <div class="slide">
+            <p>
+                <strong>{{ sellers[i % sellers|length] }}</strong> watts of solar energy sold by
+                <strong>{{ ['Shyam', 'Anita', 'Raj', 'Preeti', 'Aman'][i % 5] }}</strong>
+            </p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No sellers available.</p>
+{% endif %}
                         from <strong>{{ ['Delhi', 'Mumbai', 'Ahmedabad', 'Jaipur', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune', 'Kolkata', 'Lucknow'][i] }}</strong>, India.
                     </p>
                 </div>
@@ -138,19 +160,72 @@
         </div>
     </div>
     <script>
-        const ctx = document.getElementById('stockChart').getContext('2d');
-        const stockData = {
-            labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00'],
-            datasets: [{
-                label: 'REC Stock Price (₹)',
-                data: [245, 248, 250, 252, 255, 250],
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderWidth: 2
-            }]
-        };
-        new Chart(ctx, { type: 'line', data: stockData });
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById('stockChart').getContext('2d');
+    
+            // Fetch actual prices & SVM predictions from Flask backend
+            fetch("/solar_predictions")
+                .then(response => response.json())
+                .then(data => {
+                    const actualPrices = [0.27, 0.14, 0.21];  // Example real data
+                    const actualTimestamps = ["2025-03-01", "2025-03-03", "2025-03-05"];  
+    
+                    // Use predicted values from Flask API
+                    const predictedPrices = data.prices;
+                    const predictedTimestamps = data.dates;
+    
+                    // Combine for X-axis labels
+                    const labels = actualTimestamps.concat(predictedTimestamps);
+    
+                    // Create Chart
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Actual Prices',
+                                    data: actualPrices,
+                                    borderColor: 'blue',
+                                    backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                                    borderWidth: 2,
+                                    pointStyle: 'circle',
+                                    pointRadius: 4,
+                                    pointBackgroundColor: 'blue',
+                                    fill: false
+                                },
+                                {
+                                    label: 'Predicted Prices (SVM)',
+                                    data: new Array(actualPrices.length).fill(null).concat(predictedPrices),
+                                    borderColor: 'red',
+                                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                                    borderWidth: 2,
+                                    pointStyle: 'circle',
+                                    pointRadius: 4,
+                                    pointBackgroundColor: 'red',
+                                    fill: false,
+                                    borderDash: [5, 5] // Dashed Line for Predictions
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                x: {
+                                    title: { display: true, text: 'Date' }
+                                },
+                                y: {
+                                    title: { display: true, text: 'Price (ETH)' },
+                                    beginAtZero: false
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error("Error fetching predictions:", error));
+        });
     </script>
+    
 
     <footer>
         <p>&copy; 2024 TradeSphere. All rights reserved.</p>
