@@ -1,0 +1,150 @@
+/* General Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    color: #333;
+    background-image: url('/static/images/home1.jpg'); /* Replace with your background */
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+header{
+    background-image: url('/static/images/home1.jpg'); 
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+/* Section Styling */
+section {
+    display: flex;
+    justify-content: center; /* Align cards to the left */
+    align-items: flex-start;
+    gap: 30px;
+    padding: 40px;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: left; /* Left-align card content */
+}
+ 
+.card h2 {
+    font-size: 1.8rem;
+    color: #28a745; /* Green color for headings */
+    margin-bottom: 20px;
+}
+
+.card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+}
+
+.card ul li {
+    font-size: 1.2rem;
+    margin: 10px 0;
+    color: #333;
+    text-align: left; /* Ensure list items are left-aligned */
+}
+
+/* Button Styling */
+button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: white;
+    background-color: #28a745; /* Same green as in style.css */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+.community-forum {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 40px auto;
+    width: 80%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.community-forum h2 {
+    font-size: 2rem;
+    color: #28a745; /* Green heading */
+    margin-bottom: 20px;
+}
+
+/* Slider Styling */
+.slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 10px 0;
+}
+
+.slider .slide {
+    min-width: 300px;
+    background: rgba(240, 240, 240, 1); /* Light background for individual slides */
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.slider .slide p {
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+    text-align: left;
+}
+
+
+/* Footer Styling */
+/* footer {
+    text-align: center;
+    padding: 20px 0;
+    color: white;
+    margin-top: 250px;
+} */
+
+/*slider thingie*/
+.slider-container {
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+    position: relative;
+}
+
+.slider {
+    display: flex;
+    width: max-content;
+    animation: scroll 60s linear infinite;
+}
+
+.slide {
+    min-width: 300px;
+    padding: 10px;
+    text-align: center;
+    background: #f3f3f3;
+    border: 1px solid #ddd;
+    margin: 0 10px;
+    border-radius: 5px;
+}
+
+@keyframes scroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
