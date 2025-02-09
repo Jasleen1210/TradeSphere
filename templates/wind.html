@@ -15,13 +15,14 @@
     <header>
         <div class="logo-container">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
-            <h1>Wind Energy</h1>
+            <h1 class="text-2xl">Wind Energy</h1>
         </div>
         <nav>
             <ul class="navbar">
                 <li><a href="{{ url_for('index') }}">Home</a></li>
                 <li><a href="{{ url_for('about') }}">About</a></li>
                 <li><a href="{{ url_for('trade') }}">Trade</a></li>
+                
                 <li class="dropdown">
                     <a href="#" class="dropdown-link">Markets</a>
                     <ul class="dropdown-menu">
@@ -35,7 +36,6 @@
             </ul>
         </nav>
     </header>
-    
 <!-- Popup modal -->
 <div id="popup" class="popup">
     <div class="popup-content">
@@ -45,7 +45,7 @@
         <label for="quantity">Enter Quantity:</label>
         <input type="number" id="quantity" min="1" oninput="updatePrice()" placeholder="Enter number of RECs">
         
-        <p><strong>Final Price:</strong> ₹<span id="final-price">0</span></p>
+        <p><strong>Final Price:</strong>₹<span id="final-price">0</span></p>
         <button class="buy-btn" onclick="submitRequest()">Buy Now</button>
     </div>
 </div>
@@ -104,6 +104,9 @@
         </div>
         </div>
     </main>
+    <div class="see-more">
+        <a href="/">See More..</a>
+    </div>
     <!-- Community Forum Section -->
     <div class="community-forum">
         <h2>Community Forum: Last Hour</h2>
@@ -131,6 +134,53 @@
         </div>
     </div>
     <script>
+         document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('stockChart').getContext('2d');
+
+    fetch("/wind_predictions")
+        .then(response => response.json())
+        .then(data => {
+            const actualPrices = [0.27, 0.14, 0.21];  // Example real data
+            const actualTimestamps = ["2025-03-01", "2025-03-03", "2025-03-05"];
+
+            // Use predicted values from Flask API
+            const predictedPrices = data.prices;
+            const predictedTimestamps = data.dates;
+
+            // 🔹 Merge timestamps & prices into a continuous series
+            const combinedTimestamps = actualTimestamps.concat(predictedTimestamps);
+            const combinedPrices = actualPrices.concat(predictedPrices);  // ✅ No nulls, smooth transition
+
+            // Create Chart
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: combinedTimestamps,
+                    datasets: [
+                        {
+                            label: 'Actual & Predicted Prices',
+                            data: combinedPrices,
+                            borderColor: 'blue',
+                            backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                            borderWidth: 2,
+                            pointStyle: 'circle',
+                            pointRadius: 4,
+                            pointBackgroundColor: 'blue',
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Date' } },
+                        y: { title: { display: true, text: 'Price (ETH)' }, beginAtZero: false }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error("Error fetching predictions:", error));
+});
         (function(){
             if(!window.chatbase || window.chatbase("getState") !== "initialized"){
                 window.chatbase = (...arguments) => {
@@ -159,18 +209,7 @@
         })();
 
         //graph!
-        const ctx = document.getElementById('stockChart').getContext('2d');
-        const stockData = {
-            labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00'],
-            datasets: [{
-                label: 'REC Stock Price (₹)',
-                data: [245, 248, 250, 252, 255, 250],
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderWidth: 2
-            }]
-        };
-        new Chart(ctx, { type: 'line', data: stockData });
+     
     </script>
     <footer>
         <p>&copy; 2024 TradeSphere. All rights reserved.</p>

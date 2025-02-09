@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Trade - TradeSphere</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+    <style>
+        /* General Styles */
+        body {
+            background-image: url('/static/images/home2.jpg'); 
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            background-color: #7ba581;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .form-box {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Image Preview */
+        .image-preview {
+            display: none;
+            width: 100%;
+            border-radius: 5px;
+            margin-top: 10px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Popup */
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .popup.show {
+            display: block;
+        }
+
+        .popup button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .popup button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+            <h1>TradeSphere</h1>
+        </div>
+        <nav>
+            <ul class="navbar">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('about') }}">About</a></li>
+                <li><a href="{{ url_for('trade') }}">Trade</a></li>
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-link">Markets</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('solar') }}">Solar</a></li>
+                        <li><a href="{{ url_for('wind') }}">Wind</a></li>
+                        <li><a href="{{ url_for('biogas') }}">Biogas</a></li>
+                    </ul>
+                </li>
+                <li><a href="{{ url_for('profile') }}">My Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <h1 style="color: white;">Trade RECs on Blockchain</h1>
+
+        <div class="form-box">
+            <h2>Trade Summary</h2>
+            <p><strong>REC ID:</strong> <span id="rec-id"></span></p>
+            <p><strong>Energy Type:</strong> <span id="energy-type"></span></p>
+            <p><strong>Quantity (MWh):</strong> <span id="quantity"></span></p>
+            <p><strong>Price per MWh (INR):</strong> <span id="price"></span></p>
+            <img id="image-preview" class="image-preview">
+
+            <h2>Connect to MetaMask</h2>
+            <button class="btn" id="connect-wallet">Connect Wallet</button>
+            <p id="wallet-address"></p>
+
+            <button class="btn" id="confirm-trade">Confirm Trade</button>
+        </div>
+    </div>
+
+    <!-- Trade Confirmation Popup -->
+    <div id="trade-popup" class="popup">
+        <h3>Trade Successful! 🎉</h3>
+        <p>Your transaction has been initiated.</p>
+        <p><strong>Transaction ID:</strong> <span id="txn-hash"></span></p>
+        <button onclick="closePopup('trade-popup')">Close</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            let account;
+
+            // ✅ Populate Trade Details from LocalStorage
+            document.getElementById("rec-id").textContent = localStorage.getItem("trade_recId") || "N/A";
+            document.getElementById("energy-type").textContent = localStorage.getItem("trade_energyType") || "N/A";
+            document.getElementById("quantity").textContent = localStorage.getItem("trade_quantity") || "N/A";
+            document.getElementById("price").textContent = localStorage.getItem("trade_price") || "N/A";
+
+            // ✅ Load & Display Stored Image Preview
+            const imagePreview = document.getElementById("image-preview");
+            const storedPhoto = localStorage.getItem("trade_photo");
+            if (storedPhoto) {
+                imagePreview.src = storedPhoto;
+                imagePreview.style.display = "block";
+            }
+
+            // ✅ MetaMask Connection (DO NOT MODIFY)
+            if (typeof window.ethereum !== "undefined") {
+                window.web3 = new Web3(window.ethereum);
+                document.getElementById("connect-wallet").addEventListener("click", async function () {
+                    try {
+                        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+                        account = accounts[0];
+                        document.getElementById("wallet-address").textContent = "Connected: " + account;
+                    } catch (error) {
+                        alert("Connection failed: " + error.message);
+                    }
+                });
+            } else {
+                alert("MetaMask is required to trade RECs on the blockchain.");
+            }
+
+            // ✅ Confirm Trade Button
+            document.getElementById("confirm-trade").addEventListener("click", function () {
+                const recId = document.getElementById("rec-id").textContent;
+                const energyType = document.getElementById("energy-type").textContent;
+                const quantity = document.getElementById("quantity").textContent;
+                const price = document.getElementById("price").textContent;
+
+                // 🔹 Generate a Random Transaction ID (Simulating a Blockchain Transaction)
+                const txnHash = "0x" + Math.random().toString(36).substr(2, 64);
+                document.getElementById("txn-hash").textContent = txnHash;
+
+                // 🔹 Show Success Popup
+                showPopup("trade-popup");
+
+                // ✅ Redirect to profile.html after 3 seconds
+                setTimeout(() => {
+                    closePopup("trade-popup");
+                    window.location.href = "{{ url_for('profile') }}";
+                }, 3000);
+            });
+
+            function showPopup(popupId) {
+                document.getElementById(popupId).classList.add("show");
+            }
+
+            function closePopup(popupId) {
+                document.getElementById(popupId).classList.remove("show");
+            }
+        });
+    </script>
+
+</body>
+</html>

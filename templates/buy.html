@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy RECs - TradeSphere</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+    <style>
+        #buy-popup {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        #buy-popup.show {
+            display: block;
+        }
+
+        #buy-popup button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #buy-popup button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="trade-container">
+        <header>
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                <h1>TradeSphere</h1>
+            </div>
+            <nav>
+                <ul class="navbar">
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('about') }}">About</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-link">Trade</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('buy') }}">Buy</a></li>
+                            <li><a href="{{ url_for('trade') }}">Sell</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-link">Markets</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('solar') }}">Solar</a></li>
+                            <li><a href="{{ url_for('wind') }}">Wind</a></li>
+                            <li><a href="{{ url_for('biogas') }}">Biogas</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{{ url_for('trade') }}">Trade</a></li>
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('profile') }}">My Profile</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="content">
+            <h1>Buy Renewable Energy Certificates (RECs)</h1>
+            <p>Purchase RECs to offset your carbon footprint.</p>
+            
+            <div class="form-box">
+                <h2>Available RECs</h2>
+                <table id="rec-table">
+                    <thead>
+                        <tr>
+                            <th>Energy Type</th>
+                            <th>Quantity (kWh)</th>
+                            <th>Price (INR)</th>
+                            <th>Seller</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Confirmation Popup -->
+    <div id="buy-popup">
+        <h3>✅ Purchase Successful!</h3>
+        <p>Your REC purchase has been recorded.</p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/get_trades')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Fetched trade data:", data);  // Debugging Output
+                    const tableBody = document.querySelector("#rec-table tbody");
+                    tableBody.innerHTML = ""; // Clear table before appending rows
+
+                    if (!Array.isArray(data) || data.length === 0) {
+                        tableBody.innerHTML = "<tr><td colspan='5'>No RECs available</td></tr>";
+                        return;
+                    }
+
+                    data.forEach(trade => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${trade.energyType}</td>
+                            <td>${trade.quantity} kWh</td>
+                            <td>₹${trade.price}</td>
+                            <td>${trade.email}</td>
+                            <td><button onclick="buyREC('${trade._id}', ${trade.quantity}, ${trade.price})">Buy</button></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error loading trades:", error);
+                    document.querySelector("#rec-table tbody").innerHTML =
+                        "<tr><td colspan='5'>Error loading RECs</td></tr>";
+                });
+        });
+
+        function buyREC(tradeId, quantity, price) {
+            const userEmail = sessionStorage.getItem("userEmail");
+            if (!userEmail) {
+                alert("You must be logged in to buy RECs. Redirecting to login...");
+                window.location.href = "/login";
+                return;
+            }
+
+            fetch('/buy_rec', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tradeId, email: userEmail, quantity, price })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("buy-popup").classList.add("show");
+                } else {
+                    alert(data.error || "Purchase failed!");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function closePopup() {
+            document.getElementById('buy-popup').classList.remove('show');
+        }
+        (function(){
+            if(!window.chatbase || window.chatbase("getState") !== "initialized"){
+                window.chatbase = (...arguments) => {
+                    if(!window.chatbase.q) { window.chatbase.q = []; }
+                    window.chatbase.q.push(arguments);
+                };
+                window.chatbase = new Proxy(window.chatbase, {
+                    get(target, prop) {
+                        if (prop === "q") { return target.q; }
+                        return (...args) => target(prop, ...args);
+                    }
+                });
+            }
+            const onLoad = function() {
+                const script = document.createElement("script");
+                script.src = "https://www.chatbase.co/embed.min.js";
+                script.id = "qjVoHtpT94gDHkc3Ioe3L";
+                script.domain = "www.chatbase.co";
+                document.body.appendChild(script);
+            };
+            if (document.readyState === "complete") {
+                onLoad();
+            } else {
+                window.addEventListener("load", onLoad);
+            }
+        })();
+    </script>
+</body>
+</html>

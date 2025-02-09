@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
     <script src="/static/js/market.js"></script>
 </head>
-<body>
+<body class="solar">
     <header>
         <div class="logo-container">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
@@ -46,7 +46,7 @@
         <label for="quantity">Enter Quantity:</label>
         <input type="number" id="quantity" min="1" oninput="updatePrice()" placeholder="Enter number of RECs">
         
-        <p><strong>Final Price:</strong>₹<span id="final-price">0</span></p>
+        <p><strong>Final Price:</strong> ₹<span id="final-price">0</span></p>
         <button class="buy-btn" onclick="submitRequest()">Buy Now</button>
     </div>
 </div>
@@ -104,6 +104,9 @@
         </div>
     </main>
 
+    <div class="see-more">
+        <a href="/">See More..</a>
+    </div>
     <div class="community-forum">
         <h2>Community Forum: Last Hour</h2>
         <div class="slider-container">
@@ -112,20 +115,18 @@
                 <div class="slide">
                     <p>
                         {% if sellers %}
-    {% for i in range(10) %}
-        <div class="slide">
-            <p>
-                <strong>{{ sellers[i % sellers|length] }}</strong> watts of solar energy sold by
-                <strong>{{ ['Shyam', 'Anita', 'Raj', 'Preeti', 'Aman'][i % 5] }}</strong>
-            </p>
-        </div>
-    {% endfor %}
-{% else %}
-    <p>No sellers available.</p>
-{% endif %}
-
-                       
-                        from <strong>{{ ['Delhi', 'Mumbai', 'Ahmedabad', 'Jaipur', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune', 'Kolkata', 'Lucknow'][i] }}</strong>, India.
+                        {% for i in range(10) %}
+                <div class="slide">
+                <p>
+                    <strong>{{ sellers[i % sellers|length] }}</strong> watts of solar energy sold by
+                    <strong>{{ ['Shyam', 'Anita', 'Raj', 'Preeti', 'Aman'][i % 5] }}</strong>
+                </p>
+                </div>
+                {% endfor %}
+                {% else %}
+                    <p>No sellers available.</p>
+                {% endif %}
+                from <strong>{{ ['Delhi', 'Mumbai', 'Ahmedabad', 'Jaipur', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune', 'Kolkata', 'Lucknow'][i] }}</strong>, India.
                     </p>
                 </div>
                 {% endfor %}
@@ -133,89 +134,72 @@
                 <div class="slide">
                     <p>
                         {% if sellers %}
-    {% for i in range(10) %}
-        <div class="slide">
-            <p>
-                <strong>{{ sellers[i % sellers|length] }}</strong> watts of solar energy sold by
-                <strong>{{ ['Shyam', 'Anita', 'Raj', 'Preeti', 'Aman'][i % 5] }}</strong>
-            </p>
-        </div>
-    {% endfor %}
-{% else %}
-    <p>No sellers available.</p>
-{% endif %}
-                        from <strong>{{ ['Delhi', 'Mumbai', 'Ahmedabad', 'Jaipur', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune', 'Kolkata', 'Lucknow'][i] }}</strong>, India.
+                        {% for i in range(10) %}
+                    <div class="slide">
+                    <p>
+                        <strong>{{ sellers[i % sellers|length] }}</strong> watts of solar energy sold by
+                        <strong>{{ ['Shyam', 'Anita', 'Raj', 'Preeti', 'Aman'][i % 5] }}</strong>
                     </p>
+                </div>
+                {% endfor %}
+                {% else %}
+                    <p>No sellers available.</p>    
+                {% endif %}
+                    from <strong>{{ ['Delhi', 'Mumbai', 'Ahmedabad', 'Jaipur', 'Bangalore', 'Hyderabad', 'Chennai', 'Pune', 'Kolkata', 'Lucknow'][i] }}</strong>, India.
+                </p>
                 </div>
                 {% endfor %}
             </div>
         </div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const ctx = document.getElementById('stockChart').getContext('2d');
-    
-            // Fetch actual prices & SVM predictions from Flask backend
-            fetch("/solar_predictions")
-                .then(response => response.json())
-                .then(data => {
-                    const actualPrices = [0.27, 0.14, 0.21];  // Example real data
-                    const actualTimestamps = ["2025-03-01", "2025-03-03", "2025-03-05"];  
-    
-                    // Use predicted values from Flask API
-                    const predictedPrices = data.prices;
-                    const predictedTimestamps = data.dates;
-    
-                    // Combine for X-axis labels
-                    const labels = actualTimestamps.concat(predictedTimestamps);
-    
-                    // Create Chart
-                    new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [
-                                {
-                                    label: 'Actual Prices',
-                                    data: actualPrices,
-                                    borderColor: 'blue',
-                                    backgroundColor: 'rgba(0, 0, 255, 0.2)',
-                                    borderWidth: 2,
-                                    pointStyle: 'circle',
-                                    pointRadius: 4,
-                                    pointBackgroundColor: 'blue',
-                                    fill: false
-                                },
-                                {
-                                    label: 'Predicted Prices (SVM)',
-                                    data: new Array(actualPrices.length).fill(null).concat(predictedPrices),
-                                    borderColor: 'red',
-                                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
-                                    borderWidth: 2,
-                                    pointStyle: 'circle',
-                                    pointRadius: 4,
-                                    pointBackgroundColor: 'red',
-                                    fill: false,
-                                    borderDash: [5, 5] // Dashed Line for Predictions
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                x: {
-                                    title: { display: true, text: 'Date' }
-                                },
-                                y: {
-                                    title: { display: true, text: 'Price (ETH)' },
-                                    beginAtZero: false
-                                }
-                            }
+      document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('stockChart').getContext('2d');
+
+    fetch("/solar_predictions")
+        .then(response => response.json())
+        .then(data => {
+            const actualPrices = [0.27, 0.14, 0.21];  // Example real data
+            const actualTimestamps = ["2025-03-01", "2025-03-03", "2025-03-05"];
+
+            // Use predicted values from Flask API
+            const predictedPrices = data.prices;
+            const predictedTimestamps = data.dates;
+
+            // 🔹 Merge timestamps & prices into a continuous series
+            const combinedTimestamps = actualTimestamps.concat(predictedTimestamps);
+            const combinedPrices = actualPrices.concat(predictedPrices);  // ✅ No nulls, smooth transition
+
+            // Create Chart
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: combinedTimestamps,
+                    datasets: [
+                        {
+                            label: 'Actual & Predicted Prices',
+                            data: combinedPrices,
+                            borderColor: 'blue',
+                            backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                            borderWidth: 2,
+                            pointStyle: 'circle',
+                            pointRadius: 4,
+                            pointBackgroundColor: 'blue',
+                            fill: false
                         }
-                    });
-                })
-                .catch(error => console.error("Error fetching predictions:", error));
-        });
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Date' } },
+                        y: { title: { display: true, text: 'Price (ETH)' }, beginAtZero: false }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error("Error fetching predictions:", error));
+});
     </script>
     
 

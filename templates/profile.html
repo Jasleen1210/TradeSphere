@@ -1,15 +1,107 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradeSphere 1 - User Profile</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
+<style>
+    .orders-table tbody tr:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
+    .confirmmodal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
+    .confirm-modal button {
+        margin: 10px;
+        padding: 5px 10px;
+    }
+    #rejectBtn{
+        background-color: #af4e4c; 
+    }
+    #rejectBtn:hover{
+        background-color: #974342; 
+    }
+    /* Success Popup */
+    .success-message {
+        font-size: 18px;
+        font-weight: bold;
+        color: green;
+    }
+    /* Success Popup */
+    .reject-message {
+        font-size: 18px;
+        font-weight: bold;
+        color: rgb(128, 28, 0);
+    }
+    .close-btn{
+        text-align: end;
+    }
+    .close-btn:hover{
+        cursor: pointer;
+    }
+    .popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 2rem;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .popup-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 400px;
+        position: relative;
+        text-align: center;
+    }
+    .popup h2{
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+</style>
 <body>
-   
+    <div id="confirmationModal" class="confirmmodal">
+        <div class="close-btn" onclick="closePopup()">X</div>
+        <p>Accept request?</p>
+        <button id="rejectBtn" onclick="submitRejectRequest()">Reject</button>
+        <button id="acceptBtn" onclick="submitAcceptRequest()">Accept</button>
+    </div>
+    <!-- Success modal -->
+    <div id="success-popup" class="popup">
+        <div class="popup-content">
+            <p class="success-message">Request has been sent!</p>
+        </div>
+    </div>
+    
+    <!-- Rejected modal -->
+    <div id="reject-popup" class="popup">
+        <div class="popup-content">
+            <p class="reject-message">Request has been rejected</p>
+        </div>
+    </div>
     <section>
         <header class="navig">
             <div class="logo-container">
@@ -30,6 +122,14 @@
                             <li><a href="{{ url_for('biogas') }}">Biogas</a></li>
                         </ul>
                     </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-link">Clients</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Corporate</a></li>
+                            <li><a href="#">Residential</a></li>
+                            <li><a href="#">Industrial</a></li>
+                        </ul>
+                    </li>
                     <li><a href="{{ url_for('login') }}">Login</a></li>
                 </ul>
             </nav>
@@ -42,15 +142,14 @@
     
                     <div class="profile-details">
                         <h3>Profile Details</h3>
-                        <p><strong>Name:</strong> {{ profile.profileName }}</p>
-                        <p><strong>Username:</strong> {{ profile.userName }}</p>
-                        <p><strong>Email:</strong> {{ profile.userEmail }}</p>
-                        <p><strong>Bio:</strong> {{ profile.profileBio }}</p>
-                        <p><strong>Location:</strong> {{ profile.profileLocation }}</p>
-                        <p><strong>No. of RECs:</strong> {{ profile.profileRECs }}</p>
-                        <p><strong>Watt Quantity:</strong> {{ profile.profileWatt }}</p>
-                        <p><strong>Energies Traded:</strong> {{ profile.profileEnergy }}</p>
-
+                        <p><strong>Name:</strong> <span id="profileName"> </span></p>
+                        <p><strong>Username:</strong> <span id="userName"> </span></p>
+                        <p><strong>Email:</strong> <span id="userEmail"> </span></p>
+                        <p><strong>Bio:</strong> <span id="profileBio"> </span></p>
+                        <p><strong>Location:</strong> <span id="profileLocation"> </span></p>
+                        <p><strong>No. of RECs:</strong> <span id="profileRECs">3</span></p>
+                        <p><strong>Watt Quantity:</strong> <span id="profileWatt">123 kWh</span></p>
+                        <p><strong>Energies Traded:</strong> <span id="profileEnergy">Solar</span></p>
     
                         <a href="{{ url_for('edit') }}" class="btn">Edit Profile</a>
                         <div><a href="{{ url_for('footprint') }}" class="btn">Footprint Tracker</a></div>
@@ -72,24 +171,45 @@
                             <tr>
                                 <th>Order ID</th>
                                 <th>Energy Type</th>
-                                <th>Quantity (kWh)</th>
-                                <th>Price (INR)</th>
+                                <th>Quantity</th>
+                                <th>Total Amount(INR)</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>#ORD12345</td><td>Solar</td><td>150</td><td>3000</td><td>Completed</td></tr>
+                            <tr><td>#ORD12345</td><td>Wind</td><td>34</td><td>2040</td><td>Pending</td></tr>
                             <tr><td>#ORD12346</td><td>Wind</td><td>200</td><td>4000</td><td>Pending</td></tr>
-                            <tr><td>#ORD12347</td><td>Solar</td><td>50</td><td>1000</td><td>In Progress</td></tr>
+                            <tr><td>#ORD12347</td><td>Hydro</td><td>50</td><td>1000</td><td>In Progress</td></tr>
                             <tr><td>#ORD12348</td><td>Biogas</td><td>100</td><td>2000</td><td>Cancelled</td></tr>
-                            <tr><td>#ORD12349</td><td>Wind</td><td>300</td><td>6000</td><td>Completed</td></tr>
-                            <tr><td>#ORD12350</td><td>Biogas</td><td>75</td><td>1500</td><td>Pending</td></tr>
+                            <tr><td>#ORD12349</td><td>Solar</td><td>300</td><td>6000</td><td>Completed</td></tr>
+                            <tr><td>#ORD12350</td><td>Solar</td><td>75</td><td>1500</td><td>Pending</td></tr>
                             <tr><td>#ORD12351</td><td>Solar</td><td>120</td><td>2500</td><td>Completed</td></tr>
+                            <tr><td>#ORD12351</td><td>Wind</td><td>120</td><td>2500</td><td>Completed</td></tr>
                         </tbody>
                     </table>
                     <div class="chart-container">
                         <canvas id="ordersChart"></canvas>
                     </div>
+                    
+                </div>
+                <div class="order-container">
+                    <h2>Your Transactions</h2>
+                    <table class="orders-table" id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>RECID</th>
+                                <th>Date</th>
+                                <th>Energy Type</th>
+                                <th>Quantity</th>
+                                <th>Total Amount(INR)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>#REC12345</td><td>2025-02-09</td><td>Solar</td><td>100</td><td>2040</td></tr>
+                            <tr><td>#REC12346</td><td>2025-02-08</td><td>Solar</td><td>200</td><td>4500</td></tr>
+                            <tr><td>#REC12347</td><td>2025-02-07</td><td>Solar</td><td>150</td><td>3500</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </main>
         </div>
@@ -124,205 +244,163 @@
     </section>
 
     <script>
-         /*document.getElementById('profileName').textContent = localStorage.getItem('profileName') || 'Not set';
-   
+        document.addEventListener("DOMContentLoaded", function () {
+    // Set profile details from localStorage
+    document.getElementById('profileName').textContent = localStorage.getItem('profileName') || 'Not set';
     document.getElementById('profileBio').textContent = localStorage.getItem('profileBio') || 'Not set';
     document.getElementById('profileLocation').textContent = localStorage.getItem('profileLocation') || 'Not set';
-        // Get user data from localStorage
-        const email = localStorage.getItem('userEmail');
-        const userName = localStorage.getItem('userName'); // Retrieve the name (from email or other source)*/
-    
-        // Display the email and name in the profile section
-        document.getElementById('userEmail').textContent = email;
-        document.getElementById('userName').textContent = userName;
-    
-        function generateChart() {
-            const table = document.getElementById('ordersTable');
-            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-            
-            const statusCounts = {};
-            const statusOrders = {};
-            const totalOrders = rows.length;
-            
-            for (let row of rows) {
-                let orderId = row.cells[0].innerText.trim();
-                let status = row.cells[4].innerText.trim();
-                
-                statusCounts[status] = (statusCounts[status] || 0) + 1;
-                if (!statusOrders[status]) {
-                    statusOrders[status] = [];
-                }
-                statusOrders[status].push(orderId);
+
+    const modal = document.getElementById("confirmationModal");
+    const confirmationModal = document.getElementById("confirmationModal");
+    const acceptBtn = document.getElementById("acceptBtn");
+    const rejectBtn = document.getElementById("rejectBtn");
+    let selectedRow = null;
+
+    // Handle transaction table clicks
+    document.querySelectorAll("#transactionsTable tbody tr").forEach(row => {
+        row.addEventListener("click", function (event) {
+            if (event.target.tagName === "TD") {
+                selectedRow = this;
+                confirmationModal.style.display = "block";
             }
-            
-            const labels = Object.keys(statusCounts);
-            const data = Object.values(statusCounts);
-            
-            const ctx = document.getElementById('ordersChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384', 'green'],
-                        hoverOffset: 10
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(tooltipItem) {
-                                    let label = tooltipItem.label || '';
-                                    let count = tooltipItem.raw || 0;
-                                    let percentage = ((count / totalOrders) * 100).toFixed(2);
-                                    let orders = statusOrders[label] ? statusOrders[label] : ['No Orders'];
-                                    return [`${label}: ${percentage}%`, 'Orders:'].concat(orders);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+        });
+    });
+
+    // Accept transaction
+    acceptBtn.addEventListener("click", function () {
+        if (selectedRow) {
+            selectedRow.remove();
         }
-    
-        generateChart();
-    
-        // Modal functionality for filtering
-        const filterModal = document.getElementById("filterModal");
-        const filterBtn = document.getElementById("filterBtn");
-        const closeModal = document.getElementsByClassName("close")[0];
-        const applyFilterBtn = document.getElementById("applyFilterBtn");
-    
-        filterBtn.onclick = () => filterModal.style.display = "block"; // Open the modal
-        closeModal.onclick = () => filterModal.style.display = "none"; // Close the modal
-        window.onclick = (event) => {
-            if (event.target == filterModal) {
-                filterModal.style.display = "none"; // Close if clicking outside the modal
-            }
-        };
-    
-        // Filter function
-        // Filter function using for and if logic
-applyFilterBtn.onclick = () => {
-    const energyTypes = [];
-    const statuses = [];
-    
-    // Get selected energy types
-    const energyTypeCheckboxes = document.querySelectorAll('input[name="energyType"]:checked');
-    for (let checkbox of energyTypeCheckboxes) {
-        energyTypes.push(checkbox.value);
-    }
-    
-    // Get selected statuses
-    const statusCheckboxes = document.querySelectorAll('input[name="status"]:checked');
-    for (let checkbox of statusCheckboxes) {
-        statuses.push(checkbox.value);
-    }
-    
-    filterOrders(energyTypes, statuses);
-    filterModal.style.display = "none"; // Close modal after filter
-};
+        confirmationModal.style.display = "none";
+    });
 
-function filterOrders(energyTypes, statuses) {
-    const table = document.getElementById('ordersTable');
-    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-
-    let filteredRows = [];
-
-    for (let row of rows) {
-        const rowEnergyType = row.cells[1].innerText.trim();
-        const rowStatus = row.cells[4].innerText.trim();
-
-        let matchEnergyType = false;
-        let matchStatus = false;
-
-        // Check if the row matches any selected energy type
-        if (energyTypes.includes('All') || energyTypes.includes(rowEnergyType)) {
-            matchEnergyType = true;
+    // Reject transaction
+    rejectBtn.addEventListener("click", function () {
+        if (selectedRow) {
+            selectedRow.remove();
         }
+        confirmationModal.style.display = "none";
+    });
 
-        // Check if the row matches any selected status
-        if (statuses.includes('All') || statuses.includes(rowStatus)) {
-            matchStatus = true;
+    // Close modal when clicking outside
+    window.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
         }
+    });
 
-        // If both energy type and status match, add the row to filteredRows
-        if (matchEnergyType && matchStatus) {
-            filteredRows.push(row);
-        } else {
-            row.style.display = 'none'; // Hide non-matching rows
-        }
-    }
+    // Get user data from localStorage
+    const email = localStorage.getItem('userEmail');
+    const userName = localStorage.getItem('userName');
 
-    // Show only the filtered rows
-    for (let row of rows) {
-        if (!filteredRows.includes(row)) {
-            row.style.display = 'none'; // Hide the rows not in filteredRows
-        } else {
-            row.style.display = ''; // Show the filtered rows
-        }
-    }
+    // Display the email and name in the profile section
+    document.getElementById('userEmail').textContent = email;
+    document.getElementById('userName').textContent = userName;
 
-    // After filtering, regenerate the chart with updated data
+    // Generate order chart
     generateChart();
-}
-document.getElementById("useWallet").addEventListener("click", function () {
-    let amount = parseInt(document.getElementById("walletAmount").value);
 
-    if (isNaN(amount) || amount <= 0) {
-        alert("Please enter a valid amount to use from the wallet.");
-        return;
+    function generateChart() {
+        const table = document.getElementById('ordersTable');
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        const statusCounts = {};
+        const totalOrders = rows.length;
+
+        for (let row of rows) {
+            let status = row.cells[4].innerText.trim();
+            statusCounts[status] = (statusCounts[status] || 0) + 1;
+        }
+
+        const labels = Object.keys(statusCounts);
+        const data = Object.values(statusCounts);
+
+        const ctx = document.getElementById('ordersChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384', 'green'],
+                    hoverOffset: 10
+                }]
+            }
+        });
     }
 
-    let walletBalance = parseInt(localStorage.getItem("walletBalance")) || 0;
+    // Wallet functionality
+    let walletBalanceElement = document.getElementById("walletBalance");
+    let addMoneyButton = document.getElementById("addMoney");
+    let useWalletButton = document.getElementById("useWallet");
+    let walletAmountInput = document.getElementById("walletAmount");
 
-    if (amount > walletBalance) {
-        alert("Insufficient wallet balance!");
-        return;
+    let walletBalance = parseInt(localStorage.getItem("walletBalance") || "0");
+    walletBalanceElement.textContent = walletBalance;
+
+    // Add Money to Wallet
+    addMoneyButton.addEventListener("click", function () {
+        let amountToAdd = parseInt(walletAmountInput.value);
+
+        if (isNaN(amountToAdd) || amountToAdd <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+
+        walletBalance += amountToAdd;
+        localStorage.setItem("walletBalance", walletBalance);
+        walletBalanceElement.textContent = walletBalance ;
+        walletAmountInput.value = "";
+    });
+
+    // Use Wallet Amount
+    useWalletButton.addEventListener("click", function () {
+        let amountToUse = parseInt(walletAmountInput.value);
+
+        if (isNaN(amountToUse) || amountToUse <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+
+        if (amountToUse > walletBalance) {
+            alert("Insufficient wallet balance!");
+            return;
+        }
+
+        walletBalance -= amountToUse;
+        localStorage.setItem("walletBalance", walletBalance);
+        walletBalanceElement.textContent = walletBalance;
+        walletAmountInput.value = "";
+        alert("Amount successfully used from wallet.");
+    });
+
+    function closePopup() {
+        document.getElementById("confirmationModal").style.display = "none";
     }
 
-    // Deduct the amount from the wallet
-    walletBalance -= amount;
-    localStorage.setItem("walletBalance", walletBalance);
-    document.getElementById("walletBalance").textContent = walletBalance + " INR";
 
-    // Store transaction amount for payment page
-    localStorage.setItem("walletTransactionAmount", amount);
+    function submitAcceptRequest() {
+        closePopup();
+        document.getElementById("success-popup").classList.add("show");
+        setTimeout(() => {
+            document.getElementById("success-popup").classList.remove("show");
+        }, 1000);
+    }
 
-    // Redirect to payment.html
-    window.location.href = "payment.html";
-});
-(function(){
-            if(!window.chatbase || window.chatbase("getState") !== "initialized"){
-                window.chatbase = (...arguments) => {
-                    if(!window.chatbase.q) { window.chatbase.q = []; }
-                    window.chatbase.q.push(arguments);
-                };
-                window.chatbase = new Proxy(window.chatbase, {
-                    get(target, prop) {
-                        if (prop === "q") { return target.q; }
-                        return (...args) => target(prop, ...args);
-                    }
-                });
-            }
-            const onLoad = function() {
-                const script = document.createElement("script");
-                script.src = "https://www.chatbase.co/embed.min.js";
-                script.id = "qjVoHtpT94gDHkc3Ioe3L";
-                script.domain = "www.chatbase.co";
-                document.body.appendChild(script);
-            };
-            if (document.readyState === "complete") {
-                onLoad();
-            } else {
-                window.addEventListener("load", onLoad);
-            }
-        })();
+    function submitRejectRequest() {
+        closePopup(); // Close the buy popup
+        console.log("here")
+        // Show fail message
+        document.getElementById("reject-popup").style.display = "flex";
+
+        // Automatically close fail popup after a second
+        setTimeout(() => {
+            document.getElementById("reject-popup").style.display = "none";
+        }, 1000);
+    }
+        });
 
     </script>
-        
+      
 </body>
 </html>
