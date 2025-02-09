@@ -12,7 +12,7 @@ function closePopup() {
 function updatePrice() {
     let quantity = document.getElementById("quantity").value;
     let finalPrice = quantity * currentPrice;
-    document.getElementById("final-price").innerText = `$${finalPrice || 0}`;
+    document.getElementById("final-price").innerText = finalPrice || 0;
 }
 
 function submitRequest() {

@@ -30,14 +30,6 @@
                         <li><a href="{{ url_for('biogas') }}">Biogas</a></li>
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-link">Clients</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Corporate</a></li>
-                        <li><a href="#">Residential</a></li>
-                        <li><a href="#">Industrial</a></li>
-                    </ul>
-                </li>
                 <li><a href="{{ url_for('login') }}">Login</a></li>
                 <li><a href="{{ url_for('profile') }}">My Profile</a></li>
             </ul>
@@ -52,7 +44,7 @@
         <label for="quantity">Enter Quantity:</label>
         <input type="number" id="quantity" min="1" oninput="updatePrice()" placeholder="Enter number of RECs">
         
-        <p><strong>Final Price:</strong> <span id="final-price">₹0</span></p>
+        <p><strong>Final Price:</strong> ₹<span id="final-price">0</span></p>
         <button class="buy-btn" onclick="submitRequest()">Buy Now</button>
     </div>
 </div>
